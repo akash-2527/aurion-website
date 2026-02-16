@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        heading: ['"Playfair Display"', 'Georgia', 'serif'],
-        body: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        heading: ['"Libre Baskerville"', 'Georgia', 'serif'],
+        body: ['"Source Sans 3"', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
