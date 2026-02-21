@@ -1,7 +1,12 @@
 import SectionReveal from "@/motion/SectionReveal";
 import HoverAnimator from "@/motion/HoverAnimator";
 
-const pillars = [
+type Pillar = {
+  title: string;
+  items: string[];
+};
+
+const pillars: Pillar[] = [
   {
     title: "Sensemaking & Readiness",
     items: [
@@ -39,17 +44,25 @@ const CorePillars = () => (
         <div className="aurion-divider mb-14" />
       </SectionReveal>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {/* 1 col on mobile → 2 col on md tablet → 3 col on lg+ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {pillars.map((pillar, i) => (
           <SectionReveal key={i} delay={i * 0.12}>
             <HoverAnimator>
-              <div className="aurion-card h-full">
-                <span className="aurion-label text-primary mb-3 block">Pillar {i + 1}</span>
-                <h3 className="aurion-heading-md mb-6">{pillar.title}</h3>
-                <ul className="space-y-3">
+              <div className="aurion-card h-full flex flex-col">
+                <span className="aurion-label text-primary mb-3 block">
+                  Pillar {i + 1}
+                </span>
+                <h3 className="aurion-heading-md mb-6 leading-snug">
+                  {pillar.title}
+                </h3>
+                <ul className="space-y-4 flex-1">
                   {pillar.items.map((item, j) => (
-                    <li key={j} className="aurion-body flex items-start gap-3">
-                      <span className="mt-2 w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+                    <li
+                      key={j}
+                      className="flex items-start gap-3 text-sm md:text-base font-body leading-relaxed text-muted-foreground"
+                    >
+                      <span className="mt-[7px] w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
                       {item}
                     </li>
                   ))}

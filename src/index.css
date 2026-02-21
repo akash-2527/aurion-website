@@ -102,7 +102,7 @@
   }
 
   .aurion-heading-xl {
-    @apply text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-heading font-semibold leading-tight tracking-tight text-foreground;
+    @apply text-4xl md:text-5xl lg:text-6xl xl:text-6xl font-heading font-semibold leading-tight tracking-tight text-foreground;
   }
 
   .aurion-heading-lg {

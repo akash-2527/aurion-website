@@ -25,7 +25,7 @@ const studies = [
 const CaseStudies = () => (
   <>
     <Navbar />
-    <main className="pt-24">
+    <main>
       <section className="aurion-section">
         <div className="aurion-container">
           <SectionReveal>

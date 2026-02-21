@@ -51,31 +51,31 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
       </div>
 
-      <div className="relative z-10 aurion-container w-full pt-32 pb-20">
+      <div className="relative z-10 aurion-container w-full pt-20 pb-20">
         <div className="max-w-3xl">
-          <span className="aurion-label mb-6 block">AI Adoption & Enablement</span>
+          <span className="aurion-label mb-6 block ml-4">AI Adoption & Enablement</span>
           <h1
             ref={headlineRef}
-            className="aurion-heading-xl mb-8"
+            className="aurion-heading-xl mb-8 ml-4"
             style={{ opacity: 0 }}
           >
             Helping organisations adopt AI with clarity, confidence, and responsibility.
           </h1>
           <p
             ref={subRef}
-            className="aurion-body-lg max-w-2xl mb-10"
+            className="aurion-body-lg max-w-2xl mb-10 ml-4"
             style={{ opacity: 0 }}
           >
             Aurion helps teams embed AI into everyday workflows, learning, and decision-making — without fear, chaos, or hype.
           </p>
           <div ref={ctaRef} className="flex flex-wrap gap-4" style={{ opacity: 0 }}>
             <HoverAnimator>
-              <Link to="/how-we-work" className="aurion-btn-primary">
+              <Link to="/how-we-work" className="aurion-btn-primary ml-4">
                 Explore how we work
               </Link>
             </HoverAnimator>
             <HoverAnimator>
-              <Link to="/contact" className="aurion-btn-secondary">
+              <Link to="/contact" className="aurion-btn-secondary ml-4">
                 Book a free 30-minute clarity call
               </Link>
             </HoverAnimator>

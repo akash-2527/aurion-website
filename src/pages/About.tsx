@@ -5,7 +5,7 @@ import SectionReveal from "@/motion/SectionReveal";
 const About = () => (
   <>
     <Navbar />
-    <main className="pt-24">
+    <main>
       <section className="aurion-section">
         <div className="aurion-container">
           <SectionReveal>

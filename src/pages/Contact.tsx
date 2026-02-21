@@ -6,7 +6,7 @@ import HoverAnimator from "@/motion/HoverAnimator";
 const Contact = () => (
   <>
     <Navbar />
-    <main className="pt-24">
+    <main>
       <section className="aurion-section">
         <div className="aurion-container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
