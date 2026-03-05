@@ -1,78 +1,67 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import SectionReveal from "@/motion/SectionReveal";
-import PhaseTimeline from "@/motion/PhaseTimeline";
+// import { useEffect } from "react";
+// import { useLocation } from "react-router-dom";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import Navbar from "@/components/Navbar";
+// import Footer from "@/components/Footer";
+// import {
+//   HWWPageHero,
+//   HWWOverview,
+//   HWWWhatWeDo,
+//   HWWFourPhases,
+//   HWWTrustGap,
+//   HWWWhoWeWorkWith,
+//   HWWBookCta,
+// } from "./how-we-work";
 
-const phases = [
-  {
-    title: "Discover",
-    items: [
-      "Stakeholder conversations to understand priorities and concerns",
-      "Readiness diagnostics to baseline where the organisation sits",
-      "Mapping current AI usage — formal and informal",
-    ],
-  },
-  {
-    title: "Design",
-    items: [
-      "Identify priority workflows for AI integration",
-      "Build enablement assets — playbooks, prompts, learning paths",
-      "Design learning experiences tailored to roles and contexts",
-    ],
-  },
-  {
-    title: "Deploy",
-    items: [
-      "Champion enablement — equipping internal advocates",
-      "Communication cascades to build awareness and trust",
-      "Office hours and support structures for ongoing guidance",
-    ],
-  },
-  {
-    title: "Demonstrate",
-    items: [
-      "Impact tracking tied to real outcomes",
-      "Iteration and refinement based on feedback",
-      "Scaling adoption responsibly across the organisation",
-    ],
-  },
-];
+// // ─── HowWeWork page ───────────────────────────────────────────────────────────
+// //
+// //  This file is intentionally thin:
+// //    • Wires Navbar + Footer
+// //    • Handles hash navigation from the navbar dropdown
+// //    • Clears stale ScrollTrigger state on mount
+// //    • Composes section components in order
+// //
+// //  To edit any section open its file in src/pages/how-we-work/
+// //
+// const HowWeWork = () => {
+//   const location = useLocation();
 
-const HowWeWork = () => (
-  <>
-    <Navbar />
-    <main>
-      <section className="aurion-section">
-        <div className="aurion-container">
-          <SectionReveal>
-            <span className="aurion-label mb-4 block">How We Work</span>
-            <h1 className="aurion-heading-xl max-w-3xl mb-6">
-              A structured path to confident AI adoption.
-            </h1>
-            <p className="aurion-body-lg max-w-2xl mb-14">
-              Every engagement follows our four-phase model — designed to meet organisations where they are and move them toward embedded, responsible AI usage.
-            </p>
-          </SectionReveal>
-          <PhaseTimeline phases={phases} />
-        </div>
-      </section>
+//   // ── Hash scroll (navbar dropdown links use /how-we-work#section-id) ───────
+//   useEffect(() => {
+//     const hash = location.hash;
+//     if (hash) {
+//       // 120ms defer — React finishes render + section heights settle first
+//       const t = setTimeout(() => {
+//         const el = document.querySelector(hash);
+//         if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+//       }, 120);
+//       return () => clearTimeout(t);
+//     }
+//     window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
+//   }, [location.hash]);
 
-      <section className="aurion-section bg-aurion-warm">
-        <div className="aurion-container">
-          <SectionReveal>
-            <span className="aurion-label mb-4 block">Who We Work With</span>
-            <h2 className="aurion-heading-lg max-w-2xl mb-6">
-              Built for mid to large organisations navigating AI.
-            </h2>
-            <p className="aurion-body-lg max-w-2xl">
-              We partner with leadership teams, operations, learning & development, and enablement functions who recognise that AI adoption is an organisational challenge — not just a technology one.
-            </p>
-          </SectionReveal>
-        </div>
-      </section>
-    </main>
-    <Footer />
-  </>
-);
+//   // ── Clear stale ScrollTrigger positions on every page visit ───────────────
+//   useEffect(() => {
+//     ScrollTrigger.clearScrollMemory();
+//     const t = setTimeout(() => ScrollTrigger.refresh(), 280);
+//     return () => clearTimeout(t);
+//   }, []);
 
-export default HowWeWork;
+//   return (
+//     <>
+//       <Navbar />
+//       <main>
+//         <HWWPageHero />
+//         <HWWOverview />
+//         <HWWWhatWeDo />
+//         <HWWFourPhases />
+//         <HWWTrustGap />
+//         <HWWWhoWeWorkWith />
+//         <HWWBookCta />
+//       </main>
+//       <Footer />
+//     </>
+//   );
+// };
+
+// export default HowWeWork;

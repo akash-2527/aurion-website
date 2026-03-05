@@ -1,687 +1,618 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import SectionReveal from "@/motion/SectionReveal";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { studies } from "@/data/caseStudies";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ─── Data ────────────────────────────────────────────────────────────────────
-
-type Stat = { value: string; label: string };
-type Study = {
-  id: string;
-  index: string;
-  label: string;
-  title: string;
-  intro: string;
-  stats: Stat[];
-  challenge: string[];
-  approach: { heading: string; points: string[] };
-  outcomes: { headline: string[]; bottom: string[] };
-  whyMatters: string[];
-  cta: { text: string; link: string; label: string };
-  link?: string;
+// ─── Tokens ───────────────────────────────────────────────────────────────────
+const C = {
+  bg:      "hsl(35, 30%, 96%)",
+  warm:    "hsl(30, 20%, 92%)",
+  dark:    "hsl(15, 20%, 12%)",
+  primary: "hsl(0, 55%, 32%)",
+  gold:    "hsl(38, 45%, 55%)",
+  fg:      "hsl(15, 20%, 15%)",
+  muted:   "hsl(15, 10%, 45%)",
+  border:  "hsl(30, 15%, 85%)",
+  offW:    "rgba(245,238,228,1)",
+  offD:    "rgba(245,238,228,0.55)",
+  offM:    "rgba(245,238,228,0.28)",
 };
 
-const studies: Study[] = [
-  {
-    id: "cultural-institution",
-    index: "01",
-    label: "Public Sector · Cultural Institution",
-    title: "Creating Confidence Around AI in a Complex Cultural Institution",
-    intro:
-      "A large, publicly funded cultural institution with 1,200+ staff — spanning curatorial, security, education, visitor services, operations, and corporate teams. Work was deeply values-led, highly regulated, and publicly accountable. AI was already entering the organisation quietly. An internal review showed ~35–40% of staff had experimented with AI tools informally, fewer than 10% felt confident discussing it openly, and managers reported uncertainty around accountability, risk, and boundaries. There was no formal resistance — but there was hesitation, silence, and fragmented experimentation.",
-    stats: [
-      { value: "1,200+", label: "Staff reached across departments" },
-      { value: "70%+", label: "Increase in manager confidence" },
-      { value: "50%", label: "Reduction in hidden AI use" },
-      { value: "3×", label: "Increase in shared AI use-cases" },
-    ],
-    challenge: [
-      "AI use was happening in pockets, without shared language",
-      "Training focused on awareness, not real decision-making",
-      "Managers felt responsible for AI risk, but lacked frameworks",
-      "Staff were unsure when AI use was acceptable, ethical, or valuable",
-      "62% of staff were unsure what 'good AI use' looked like in their role",
-      "58% of managers avoided AI conversations due to fear of getting it wrong",
-    ],
-    approach: {
-      heading:
-        "The intervention focused on normalising AI as a work practice, not a technical capability.",
-      points: [
-        "Scenario-based learning grounded in real organisational workflows",
-        "Manager-led conversations to support psychological safety",
-        "Clear framing around ethics, accountability, and judgement",
-        "Embedding AI discussions into existing learning systems",
-        "Live manager workshops using real internal scenarios",
-        "Organisation-wide learning modules accessed by 80%+ of staff",
-        "Practical decision frameworks rather than tool-specific training",
-      ],
-    },
-    outcomes: {
-      headline: [
-        "1,200+ staff engaged across learning and communications within four months",
-        "75% of managers reported increased confidence handling AI-related queries",
-        "40% uplift in staff reporting clarity around acceptable AI use",
-        "AI conversations shifted from informal to documented and shared",
-      ],
-      bottom: [
-        "Staff stopped hiding experimentation",
-        "Managers stopped avoiding the topic",
-        "AI became discussable, not divisive",
-      ],
-    },
-    whyMatters: [
-      "In highly accountable environments, AI adoption fails when it is framed as a technology rollout.",
-      "It succeeds when people are given shared language, decision-making confidence, and permission to think critically.",
-      "This project demonstrated that psychological readiness precedes technical maturity.",
-    ],
-    cta: {
-      text: "If your organisation is seeing fragmented AI use, managerial hesitation, or unspoken anxiety around AI, this is the type of adoption work we specialise in.",
-      link: "/contact",
-      label: "See how this approach can translate to your teams",
-    },
-  },
-  {
-    id: "hr-learning-workflows",
-    index: "02",
-    label: "Professional Services · HR & Learning",
-    title: "Embedding AI Into Everyday HR & Learning Workflows",
-    intro:
-      "This organisation was already digitally capable, but AI use was inconsistent and uneven. HR and Learning teams were under pressure to move faster, produce more content, and support managers at scale. AI tools had started to appear organically — recruiters experimenting with prompts, L&D teams testing content generation, managers asking informal questions. An internal review showed 45–50% of the HR/L&D team had tried AI tools, but only 15% felt confident using them in live work. No shared standards, examples, or workflow integration existed. AI was seen as 'helpful but risky.'",
-    stats: [
-      { value: "30+", label: "HR & L&D professionals supported" },
-      { value: "35–40%", label: "Reduction in repeat content task time" },
-      { value: "2×", label: "Increase in day-to-day AI confidence" },
-      { value: "20+", label: "Documented use-cases shared across teams" },
-    ],
-    challenge: [
-      "Teams struggled knowing where AI actually fit into their workflow",
-      "Understanding what was acceptable vs risky was unclear",
-      "Turning one-off experiments into repeatable practice was difficult",
-      "60% were unsure if AI use would be supported by leadership",
-      "55% avoided using AI on 'important' tasks",
-      "AI was treated as an experiment, not a capability",
-    ],
-    approach: {
-      heading: "The work focused on workflow-level adoption, not tool training.",
-      points: [
-        "Mapped existing HR and L&D workflows to identify pressure points",
-        "Co-designed prompts and decision rules with the team",
-        "Embedded AI use into existing processes, not on top of them",
-        "Workflow mapping sessions covering recruitment, onboarding, learning design",
-        "Prompt playbooks tailored to real, recurring tasks",
-        "Decision guidelines for when not to use AI",
-      ],
-    },
-    outcomes: {
-      headline: [
-        "Content development cycles shortened by 30–40% within eight weeks",
-        "Teams reported higher confidence using AI without escalation",
-        "Managers gained clarity on oversight and accountability",
-        "AI use shifted from 'quiet' to openly discussed",
-      ],
-      bottom: [
-        "AI stopped feeling experimental",
-        "It became a normal part of work",
-        "Internal enablement beat external tooling",
-      ],
-    },
-    whyMatters: [
-      "HR and L&D teams sit at the centre of organisational change.",
-      "When they adopt AI with clarity — managers follow, standards spread, adoption scales responsibly.",
-      "This work demonstrated how internal enablement beats external tooling.",
-    ],
-    cta: {
-      text: "If your people teams are experimenting with AI but lack structure or confidence, this approach helps turn curiosity into capability.",
-      link: "/contact",
-      label: "Explore how this model works in practice",
-    },
-  },
-  {
-    id: "small-business-workflows",
-    index: "03",
-    label: "Small Business · Operations",
-    title: "Building AI-Enabled Workflows in a Small, Fast-Moving Organisation",
-    intro:
-      "This organisation was small, ambitious, and resource-constrained. Like many growing teams, they faced increasing operational load, limited headcount, and reliance on manual processes. AI interest was high, but clarity was low. Initial conversations revealed 70% of team members were using AI in some form, usage varied widely by role and confidence, and no shared workflows or standards existed. AI was helping individuals — but not the organisation.",
-    stats: [
-      { value: "10–12", label: "Core workflows redesigned with AI" },
-      { value: "25–30%", label: "Reduction in manual operational effort" },
-      { value: "15+", label: "Hours saved per week across the team" },
-      { value: "100%", label: "Team adoption of shared AI workflows" },
-    ],
-    challenge: [
-      "Knowledge lived in individuals' heads, creating fragility",
-      "Processes broke when people were unavailable",
-      "AI use was unrepeatable and undocumented",
-      "Leadership wanted speed, consistency, and internal ownership",
-      "Not dependency on external consultants",
-    ],
-    approach: {
-      heading: "The intervention centred on co-creation, not delivery.",
-      points: [
-        "The team mapped their own processes to identify friction points",
-        "Designed AI-assisted steps together, not imposed from outside",
-        "Documented workflows in plain language for ongoing use",
-        "Live workflow design sessions with full team involvement",
-        "Simple, tool-agnostic AI patterns that aren't vendor-dependent",
-        "Clear ownership and handover rules for sustainability",
-      ],
-    },
-    outcomes: {
-      headline: [
-        "Core processes became repeatable and resilient within one month",
-        "Operational load reduced by 25–30% across the team",
-        "New team members onboarded faster using shared workflows",
-        "AI use became visible, discussable, and improvable",
-      ],
-      bottom: [
-        "The organisation gained leverage — not complexity",
-        "AI became something the team owned, not outsourced",
-        "Single-source documentation created for ongoing use",
-      ],
-    },
-    whyMatters: [
-      "Small teams do not need sophisticated AI systems.",
-      "They need clarity, ownership, and workflows that scale with them.",
-      "This approach ensures AI strengthens the organisation, not individuals only.",
-    ],
-    cta: {
-      text: "If your team is moving fast but feeling stretched, AI-enabled workflows can create breathing room without adding risk.",
-      link: "/contact",
-      label: "See how workflow-first adoption works",
-    },
-  },
+// ─── Page mount ───────────────────────────────────────────────────────────────
+function usePageMount() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    ScrollTrigger.clearScrollMemory();
+    const t1 = setTimeout(() => ScrollTrigger.refresh(), 50);
+    const t2 = setTimeout(() => ScrollTrigger.refresh(), 350);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+}
+
+// ─── Marquee ──────────────────────────────────────────────────────────────────
+const WORDS = [
+  "Cultural Institution", "·", "HR & Learning", "·",
+  "Operations", "·", "Responsible AI", "·",
+  "Real Organisations", "·", "Practical Outcomes", "·",
 ];
 
-// ─── Animated Counter ─────────────────────────────────────────────────────────
-
-const StatCard = ({
-  stat,
-  delay,
-}: {
-  stat: Stat;
-  delay: number;
-}) => {
-  const ref = useRef<HTMLDivElement>(null);
-
+function MarqueeStrip() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const wrapRef  = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (!ref.current) return;
-    const el = ref.current;
-    gsap.fromTo(
-      el,
-      { opacity: 0, y: 30, scale: 0.92 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.7,
-        delay,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 88%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-  }, [delay]);
-
-  return (
-    <div
-      ref={ref}
-      className="flex flex-col items-start p-6 rounded-sm"
-      style={{
-        opacity: 0,
-        background: "hsla(0,55%,32%,0.06)",
-        borderLeft: "3px solid hsl(0,55%,32%)",
-      }}
-    >
-      <span
-        className="font-heading text-3xl md:text-4xl font-bold mb-1"
-        style={{ color: "hsl(0,55%,32%)" }}
-      >
-        {stat.value}
-      </span>
-      <span className="font-body text-sm text-muted-foreground leading-snug">
-        {stat.label}
-      </span>
-    </div>
-  );
-};
-
-// ─── Progress Bar ─────────────────────────────────────────────────────────────
-
-const ProgressLine = ({ delay }: { delay: number }) => {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!ref.current) return;
-    gsap.fromTo(
-      ref.current,
-      { scaleX: 0 },
-      {
-        scaleX: 1,
-        duration: 1.2,
-        delay,
-        ease: "power2.inOut",
-        transformOrigin: "left center",
-        scrollTrigger: {
-          trigger: ref.current,
-          start: "top 90%",
-        },
-      }
-    );
-  }, [delay]);
-
-  return (
-    <div
-      className="h-px w-full my-12"
-      style={{ background: "hsl(30,15%,85%)" }}
-    >
-      <div
-        ref={ref}
-        className="h-full"
-        style={{
-          background: "hsl(38,45%,55%)",
-          scaleX: 0,
-          transformOrigin: "left center",
-        }}
-      />
-    </div>
-  );
-};
-
-// ─── Single Case Study Block ──────────────────────────────────────────────────
-
-const CaseStudyBlock = ({
-  study,
-  index,
-}: {
-  study: Study;
-  index: number;
-}) => {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const [expanded, setExpanded] = useState(false);
-
-  useEffect(() => {
-    if (!headerRef.current) return;
-    const children = headerRef.current.querySelectorAll(".animate-child");
-    gsap.fromTo(
-      children,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        stagger: 0.12,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: headerRef.current,
-          start: "top 82%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
+    gsap.set(wrapRef.current, { opacity: 0 });
+    gsap.to(wrapRef.current,  { opacity: 1, duration: 0.8, delay: 1.3, ease: "power2.out" });
+    const ctx = gsap.context(() => {
+      gsap.to(trackRef.current, { x: "-50%", duration: 36, ease: "none", repeat: -1 });
+    });
+    return () => ctx.revert();
   }, []);
-
-  // Animate expanded content
-  const detailRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    if (!detailRef.current || !expanded) return;
-    const items = detailRef.current.querySelectorAll(".detail-item");
-    gsap.fromTo(
-      items,
-      { opacity: 0, x: -20 },
-      {
-        opacity: 1,
-        x: 0,
-        stagger: 0.06,
-        duration: 0.5,
-        ease: "power2.out",
-      }
-    );
-  }, [expanded]);
-
   return (
-    <article className="mb-0">
-      {/* Header row */}
-      <div ref={headerRef} className="mb-10">
-        <div className="flex items-start justify-between gap-4 mb-6">
-          <div className="flex items-center gap-4">
-            <span
-              className="animate-child font-heading text-5xl font-bold opacity-20 select-none leading-none"
-              style={{ color: "hsl(0,55%,32%)" }}
-            >
-              {study.index}
-            </span>
-            <span
-              className="animate-child aurion-label"
-              style={{ opacity: 0 }}
-            >
-              {study.label}
-            </span>
-          </div>
-        </div>
-
-        <h2
-          className="animate-child aurion-heading-lg mb-6 max-w-3xl"
-          style={{ opacity: 0 }}
-        >
-          {study.title}
-        </h2>
-
-        <p
-          className="animate-child aurion-body max-w-3xl mb-8 leading-relaxed"
-          style={{ opacity: 0 }}
-        >
-          {study.intro}
-        </p>
-      </div>
-
-      {/* Stats grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        {study.stats.map((stat, i) => (
-          <StatCard key={i} stat={stat} delay={i * 0.08} />
+    <div ref={wrapRef} style={{ overflow: "hidden", borderBottom: `1px solid ${C.border}`, opacity: 0 }}>
+      <div ref={trackRef} style={{ display: "flex", whiteSpace: "nowrap", width: "200%", padding: "12px 0" }}>
+        {[...WORDS, ...WORDS].map((w, i) => (
+          <span key={i} className="font-heading text-sm font-medium"
+            style={{ padding: "0 1.5rem", color: w === "·" ? C.gold : "hsl(15,10%,54%)" }}>
+            {w}
+          </span>
         ))}
       </div>
+    </div>
+  );
+}
 
-      {/* Attention callout */}
-      <div
-        className="rounded-sm p-6 md:p-8 mb-10"
-        style={{
-          background: "hsl(35,30%,93%)",
-          borderLeft: "4px solid hsl(38,45%,55%)",
-        }}
-      >
-        <p
-          className="font-heading text-lg md:text-xl font-medium leading-relaxed"
-          style={{ color: "hsl(15,20%,18%)" }}
-        >
-          "{study.approach.heading}"
-        </p>
+// ─── Hero ─────────────────────────────────────────────────────────────────────
+function Hero() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const orbRef     = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const ruleRef    = useRef<HTMLDivElement>(null);
+
+  // Mouse orb
+  useEffect(() => {
+    const section = sectionRef.current;
+    const orb     = orbRef.current;
+    if (!section || !orb) return;
+    let raf: number, tx = 0, ty = 0, cx = 0, cy = 0;
+    const onMove = (e: MouseEvent) => {
+      const r = section.getBoundingClientRect();
+      tx = ((e.clientX - r.left) / r.width  - 0.5) * 80;
+      ty = ((e.clientY - r.top)  / r.height - 0.5) * 50;
+    };
+    const tick = () => {
+      cx += (tx - cx) * 0.04; cy += (ty - cy) * 0.04;
+      orb.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
+      raf = requestAnimationFrame(tick);
+    };
+    section.addEventListener("mousemove", onMove, { passive: true });
+    raf = requestAnimationFrame(tick);
+    return () => { section.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
+  }, []);
+
+  // Entrance
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const items = el.querySelectorAll<HTMLElement>(".hl");
+    gsap.set(items, { opacity: 0, y: 56, skewY: 1.5, force3D: true });
+    const ctx = gsap.context(() => {
+      gsap.to(items, { opacity: 1, y: 0, skewY: 0, stagger: 0.11, duration: 1.05, ease: "power4.out", delay: 0.2, force3D: true });
+    }, el);
+    return () => ctx.revert();
+  }, []);
+
+  // Rule draw
+  useEffect(() => {
+    const el = ruleRef.current;
+    if (!el) return;
+    gsap.set(el, { scaleX: 0, transformOrigin: "left center" });
+    gsap.to(el, { scaleX: 1, duration: 1.3, ease: "power3.inOut", delay: 1.0 });
+  }, []);
+
+  return (
+    <section ref={sectionRef} style={{
+      position: "relative", overflow: "hidden",
+      padding: "128px 0 80px", background: C.bg,
+    }}>
+      {/* Noise */}
+      <div aria-hidden style={{
+        position: "absolute", inset: 0, zIndex: 0, opacity: 0.02,
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
+        backgroundSize: "160px 160px",
+      }} />
+      {/* Grid */}
+      <div aria-hidden style={{
+        position: "absolute", inset: 0, zIndex: 0,
+        backgroundImage: `linear-gradient(hsla(0,55%,32%,0.025) 1px, transparent 1px), linear-gradient(90deg, hsla(0,55%,32%,0.025) 1px, transparent 1px)`,
+        backgroundSize: "80px 80px",
+      }} />
+      {/* Orb */}
+      <div ref={orbRef} aria-hidden style={{
+        position: "absolute", top: "42%", left: "66%",
+        width: "620px", height: "620px", borderRadius: "50%",
+        background: `radial-gradient(circle, hsla(38,45%,55%,0.09) 0%, hsla(0,55%,32%,0.04) 48%, transparent 72%)`,
+        filter: "blur(56px)", transform: "translate(-50%,-50%)",
+        pointerEvents: "none", zIndex: 0, willChange: "transform",
+      }} />
+
+      <div className="aurion-container" style={{ position: "relative", zIndex: 1 }}>
+        <div ref={contentRef}>
+          <span className="hl aurion-label mb-6 block" style={{ opacity: 0 }}>Evidence in Practice</span>
+
+          <h1 className="hl font-heading font-semibold leading-tight" style={{
+            opacity: 0,
+            fontSize: "clamp(2.4rem,6vw,5rem)",
+            color: C.fg, letterSpacing: "-0.025em",
+            maxWidth: "14ch",
+          }}>
+            Real work.<br />
+            <span style={{ color: C.primary }}>Real outcomes.</span>
+          </h1>
+
+          {/* Animated rule */}
+          <div style={{ position: "relative", height: "1px", maxWidth: "280px", margin: "2.25rem 0" }}>
+            <div style={{ position: "absolute", inset: 0, background: C.border }} />
+            <div ref={ruleRef} style={{
+              position: "absolute", inset: 0,
+              background: `linear-gradient(90deg, ${C.primary}, ${C.gold}, transparent)`,
+              opacity: 0.8,
+            }} />
+          </div>
+
+          <p className="hl font-body max-w-xl" style={{
+            opacity: 0, fontSize: "clamp(1rem,1.4vw,1.1rem)",
+            color: C.muted, lineHeight: 1.82,
+          }}>
+            Helping organisations move from fragmented AI experimentation to structured,
+            confident, responsible adoption. Details have been anonymised.
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Editorial Study Row ──────────────────────────────────────────────────────
+function StudyRow({ study, index, isLast }: {
+  study: typeof studies[0];
+  index: number;
+  isLast: boolean;
+}) {
+  const rowRef   = useRef<HTMLDivElement>(null);
+  const ruleRef  = useRef<HTMLDivElement>(null);
+  const numRef   = useRef<HTMLDivElement>(null);
+  const metaRef  = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const bodyRef  = useRef<HTMLParagraphElement>(null);
+  const tagsRef  = useRef<HTMLDivElement>(null);
+  const statRef  = useRef<HTMLDivElement>(null);
+  const ctaRef   = useRef<HTMLAnchorElement>(null);
+  const arrowRef = useRef<HTMLSpanElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  // Scroll entrance
+  useEffect(() => {
+    const els = [
+      numRef.current, metaRef.current, titleRef.current,
+      bodyRef.current, tagsRef.current, statRef.current, ctaRef.current,
+    ].filter(Boolean) as HTMLElement[];
+
+    gsap.set(ruleRef.current, { scaleX: 0, transformOrigin: "left center" });
+    gsap.set(els, { opacity: 0, y: 22, force3D: true });
+
+    const ctx = gsap.context(() => {
+      const st = { trigger: rowRef.current, start: "top 87%", once: true, invalidateOnRefresh: true };
+      gsap.to(ruleRef.current, { scaleX: 1, duration: 0.85, ease: "power3.inOut", scrollTrigger: st, delay: index * 0.04 });
+      gsap.to(els, { opacity: 1, y: 0, stagger: 0.065, duration: 0.75, ease: "power3.out", force3D: true, scrollTrigger: st, delay: index * 0.04 + 0.08 });
+    });
+    return () => ctx.revert();
+  }, [index]);
+
+  // Arrow micro-interaction
+  useEffect(() => {
+    const arrow = arrowRef.current;
+    if (!arrow) return;
+    if (hovered) gsap.to(arrow, { x: 5, duration: 0.3, ease: "power2.out" });
+    else         gsap.to(arrow, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.55)" });
+  }, [hovered]);
+
+  const stat = study.stats[0];
+  const tags: string[] = (study.outcomes?.tags ?? []).slice(0, 3);
+
+  return (
+    <div ref={rowRef}>
+      {/* Animated top rule */}
+      <div style={{ position: "relative", height: "1px" }}>
+        <div style={{ position: "absolute", inset: 0, background: C.border }} />
+        <div ref={ruleRef} style={{
+          position: "absolute", inset: 0,
+          background: hovered
+            ? `linear-gradient(90deg, ${C.primary}, ${C.gold} 55%, transparent)`
+            : `linear-gradient(90deg, hsla(0,55%,32%,0.35), transparent)`,
+          transition: "background 0.45s ease",
+        }} />
       </div>
 
-      {/* Toggle details */}
-      <button
-        onClick={() => setExpanded((p) => !p)}
-        className="flex items-center gap-3 mb-6 group"
-        style={{ color: "hsl(0,55%,32%)" }}
+      {/* Row body */}
+      <div
+        style={{
+          padding: "clamp(2rem,4vw,3.5rem) 0",
+          background: hovered ? `hsla(0,55%,32%,0.018)` : "transparent",
+          transition: "background 0.35s ease",
+          cursor: "default",
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        <span className="aurion-label">
-          {expanded ? "Hide full case study" : "Read full case study"}
-        </span>
-        <span
-          className="text-lg transition-transform duration-300 group-hover:translate-x-1"
-          style={{
-            transform: expanded ? "rotate(90deg)" : "rotate(0deg)",
-            display: "inline-block",
-            transition: "transform 0.3s ease",
-          }}
-        >
-          →
-        </span>
-      </button>
+        <div className="aurion-container">
 
-      {/* Expandable detail */}
-      {expanded && (
-        <div ref={detailRef} className="space-y-10 mb-10">
-          {/* Challenge */}
-          <div className="detail-item" style={{ opacity: 0 }}>
-            <h3 className="aurion-label mb-4 block">The Challenge</h3>
-            <ul className="space-y-2">
-              {study.challenge.map((c, i) => (
-                <li key={i} className="flex items-start gap-3 aurion-body">
-                  <span
-                    className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: "hsl(0,55%,32%)" }}
-                  />
-                  {c}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* ── Desktop 3-col grid ── */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "72px 1fr 200px",
+            gap: "2rem 3.5rem",
+            alignItems: "start",
+          }}>
 
-          {/* Approach */}
-          <div className="detail-item" style={{ opacity: 0 }}>
-            <h3 className="aurion-label mb-4 block">The Approach</h3>
-            <ul className="space-y-2">
-              {study.approach.points.map((p, i) => (
-                <li key={i} className="flex items-start gap-3 aurion-body">
-                  <span
-                    className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0"
-                    style={{ background: "hsl(38,45%,55%)" }}
-                  />
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Outcomes */}
-          <div className="detail-item" style={{ opacity: 0 }}>
-            <h3 className="aurion-label mb-4 block">Outcomes</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-              {study.outcomes.headline.map((o, i) => (
-                <div
-                  key={i}
-                  className="p-4 rounded-sm"
-                  style={{ background: "hsla(0,55%,32%,0.05)" }}
-                >
-                  <p className="font-body text-sm leading-relaxed text-foreground">
-                    {o}
-                  </p>
-                </div>
-              ))}
+            {/* Index number */}
+            <div ref={numRef} style={{ opacity: 0, paddingTop: "4px" }}>
+              <span className="font-heading font-bold" style={{
+                fontSize: "clamp(3rem,4.5vw,4.5rem)",
+                lineHeight: 1, letterSpacing: "-0.05em",
+                color: C.primary,
+                display: "block",
+                opacity: hovered ? 0.25 : 0.09,
+                transition: "opacity 0.35s ease",
+                userSelect: "none",
+              }}>
+                {study.index}
+              </span>
             </div>
-            <div className="flex flex-wrap gap-3">
-              {study.outcomes.bottom.map((b, i) => (
-                <span
-                  key={i}
-                  className="px-4 py-1.5 rounded-full font-body text-xs font-medium"
-                  style={{
-                    background: "hsl(38,45%,55%)",
-                    color: "hsl(15,20%,12%)",
-                  }}
-                >
-                  {b}
+
+            {/* Content */}
+            <div>
+              {/* Meta row */}
+              <div ref={metaRef} style={{
+                opacity: 0, display: "flex", alignItems: "center",
+                gap: "0.75rem", marginBottom: "0.75rem", flexWrap: "wrap",
+              }}>
+                <span className="aurion-label" style={{ color: C.gold }}>{study.label}</span>
+                <span style={{ width: "3px", height: "3px", borderRadius: "50%", background: C.border, flexShrink: 0 }} />
+                <span className="font-body" style={{ fontSize: "0.7rem", color: C.muted, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                  Case Study
                 </span>
-              ))}
-            </div>
-          </div>
+              </div>
 
-          {/* Why it matters */}
-          <div
-            className="detail-item p-6 md:p-8 rounded-sm"
-            style={{
-              opacity: 0,
-              background: "hsl(15,20%,12%)",
-              color: "hsl(35,30%,93%)",
-            }}
-          >
-            <h3
-              className="aurion-label mb-4 block"
-              style={{ color: "hsl(38,45%,62%)" }}
-            >
-              Why This Matters
-            </h3>
-            <div className="space-y-3">
-              {study.whyMatters.map((w, i) => (
-                <p key={i} className="font-body text-sm leading-relaxed" style={{ color: "hsl(35,25%,82%)" }}>
-                  {w}
-                </p>
-              ))}
+              {/* Title */}
+              <h2 ref={titleRef} className="font-heading font-semibold" style={{
+                opacity: 0,
+                fontSize: "clamp(1.25rem,2vw,1.8rem)",
+                color: hovered ? C.primary : C.fg,
+                lineHeight: 1.25, letterSpacing: "-0.018em",
+                maxWidth: "48ch", marginBottom: "0.9rem",
+                transition: "color 0.3s ease",
+              }}>
+                {study.title}
+              </h2>
+
+              {/* Intro */}
+              <p ref={bodyRef} className="font-body" style={{
+                opacity: 0, fontSize: "0.88rem", color: C.muted,
+                lineHeight: 1.8, maxWidth: "58ch", marginBottom: "1.25rem",
+              }}>
+                {study.intro}
+              </p>
+
+              {/* Outcome tags */}
+              {tags.length > 0 && (
+                <div ref={tagsRef} style={{ opacity: 0, display: "flex", flexWrap: "wrap", gap: "0.45rem" }}>
+                  {tags.map((tag, i) => (
+                    <span key={i} className="font-body" style={{
+                      fontSize: "0.68rem", fontWeight: 500,
+                      padding: "0.28rem 0.75rem", borderRadius: "999px",
+                      border: `1px solid ${hovered ? `hsla(0,55%,32%,0.25)` : C.border}`,
+                      color: hovered ? C.primary : C.muted,
+                      textTransform: "uppercase", letterSpacing: "0.07em",
+                      transition: "border-color 0.3s ease, color 0.3s ease",
+                    }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Right column: stat + CTA */}
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "1.75rem" }}>
+              {/* Key stat */}
+              <div ref={statRef} style={{ opacity: 0, textAlign: "right" }}>
+                <span className="font-heading font-bold block" style={{
+                  fontSize: "clamp(2rem,3.2vw,3rem)",
+                  color: C.primary, lineHeight: 1, letterSpacing: "-0.03em",
+                  opacity: hovered ? 1 : 0.65,
+                  transition: "opacity 0.3s ease",
+                }}>
+                  {stat.value}
+                </span>
+                <span className="font-body" style={{
+                  fontSize: "0.7rem", color: C.muted, display: "block",
+                  marginTop: "0.3rem", textTransform: "uppercase", letterSpacing: "0.08em",
+                }}>
+                  {stat.label}
+                </span>
+              </div>
+
+              {/* CTA */}
+              <Link
+                ref={ctaRef}
+                to={`/case-studies/${study.id}`}
+                style={{
+                  opacity: 0,
+                  display: "inline-flex", alignItems: "center", gap: "0.45rem",
+                  textDecoration: "none", fontFamily: "inherit",
+                  fontSize: "0.78rem", fontWeight: 600,
+                  letterSpacing: "0.08em", textTransform: "uppercase",
+                  color: hovered ? C.primary : C.muted,
+                  borderBottom: `1px solid ${hovered ? C.primary : "transparent"}`,
+                  paddingBottom: "2px",
+                  transition: "color 0.25s ease, border-color 0.25s ease",
+                }}
+                onMouseEnter={() => setHovered(true)}
+                onMouseLeave={() => setHovered(false)}
+              >
+                <span>View case study</span>
+                <span ref={arrowRef} style={{ display: "inline-block", willChange: "transform" }}>→</span>
+              </Link>
             </div>
           </div>
         </div>
-      )}
-
-      {/* CTA strip */}
-      <div
-        className="rounded-sm p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
-        style={{
-          background: "hsl(35,25%,94%)",
-          border: "1px solid hsl(30,15%,85%)",
-        }}
-      >
-        <p className="font-body text-sm md:text-base leading-relaxed text-muted-foreground max-w-xl">
-          {study.cta.text}
-        </p>
-        <Link
-          to={study.cta.link}
-          className="aurion-btn-primary whitespace-nowrap text-sm shrink-0"
-          style={{ borderRadius: "2px" }}
-        >
-          {study.cta.label} →
-        </Link>
       </div>
 
-      {index < studies.length - 1 && <ProgressLine delay={0.2} />}
-    </article>
+      {isLast && <div style={{ height: "1px", background: C.border }} />}
+    </div>
   );
-};
+}
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
-
-const CaseStudies = () => {
-  const heroRef = useRef<HTMLDivElement>(null);
+// ─── Pull Quote ───────────────────────────────────────────────────────────────
+function PullQuote() {
+  const ref    = useRef<HTMLDivElement>(null);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    if (!heroRef.current) return;
-    const els = heroRef.current.querySelectorAll(".hero-item");
-    gsap.fromTo(
-      els,
-      { opacity: 0, y: 50 },
-      {
-        opacity: 1,
-        y: 0,
-        stagger: 0.15,
-        duration: 1,
-        ease: "power3.out",
-        delay: 0.3,
-      }
-    );
+    const el = ref.current;
+    if (!el) return;
+    gsap.set(lineRef.current, { scaleY: 0, transformOrigin: "top center" });
+    gsap.set(textRef.current, { opacity: 0, x: -28 });
+    const ctx = gsap.context(() => {
+      const st = { trigger: el, start: "top 85%", once: true, invalidateOnRefresh: true };
+      gsap.to(lineRef.current, { scaleY: 1, duration: 0.65, ease: "power3.out", scrollTrigger: st });
+      gsap.to(textRef.current, { opacity: 1, x: 0, duration: 0.9, ease: "power3.out", delay: 0.2, scrollTrigger: st });
+    }, el);
+    return () => ctx.revert();
   }, []);
 
+  return (
+    <div ref={ref} style={{ background: C.warm, padding: "88px 0" }}>
+      <div className="aurion-container max-w-4xl">
+        <div style={{ display: "flex", gap: "2.25rem", alignItems: "flex-start" }}>
+          <div ref={lineRef} style={{
+            width: "4px", minHeight: "88px", flexShrink: 0, borderRadius: "2px",
+            background: `linear-gradient(to bottom, ${C.gold}, ${C.primary}55)`,
+          }} />
+          <p ref={textRef} className="font-heading font-medium" style={{
+            fontSize: "clamp(1.3rem,2.4vw,2rem)",
+            lineHeight: 1.52, color: C.fg, opacity: 0, letterSpacing: "-0.012em",
+          }}>
+            "AI adoption is not a technology problem. It is a trust
+            problem — and trust is built through clarity, not tools."
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Count-up number ──────────────────────────────────────────────────────────
+function CountUp({ value, suffix = "" }: { value: number; suffix?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obj = { val: 0 };
+    const ctx = gsap.context(() => {
+      gsap.to(obj, {
+        val: value, duration: 1.6, ease: "power2.out",
+        scrollTrigger: { trigger: el, start: "top 88%", once: true, invalidateOnRefresh: true },
+        onUpdate: () => { if (el) el.textContent = `${Math.round(obj.val)}${suffix}`; },
+      });
+    }, el);
+    return () => ctx.revert();
+  }, [value, suffix]);
+  return <span ref={ref}>0{suffix}</span>;
+}
+
+// ─── Metrics Bar ─────────────────────────────────────────────────────────────
+function MetricsBar() {
+  const ref     = useRef<HTMLDivElement>(null);
+  const ruleRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const items = el.querySelectorAll<HTMLElement>(".mi");
+    gsap.set(items, { opacity: 0, y: 20 });
+    gsap.set(ruleRef.current, { scaleX: 0, transformOrigin: "left center" });
+    const ctx = gsap.context(() => {
+      const st = { trigger: el, start: "top 88%", once: true, invalidateOnRefresh: true };
+      gsap.to(ruleRef.current, { scaleX: 1, duration: 1.0, ease: "power2.inOut", scrollTrigger: st });
+      gsap.to(items, { opacity: 1, y: 0, stagger: 0.1, duration: 0.8, ease: "power3.out", scrollTrigger: st, delay: 0.2 });
+    }, el);
+    return () => ctx.revert();
+  }, []);
+
+  const metrics = [
+    { value: 3,   suffix: "",  label: "Sectors covered"       },
+    { value: 94,  suffix: "%", label: "Avg. satisfaction"     },
+    { value: 12,  suffix: "+", label: "Interventions run"     },
+    { value: 100, suffix: "%", label: "Anonymised engagements" },
+  ];
+
+  return (
+    <div style={{ background: C.dark, padding: "80px 0", position: "relative", overflow: "hidden" }}>
+      <div aria-hidden style={{
+        position: "absolute", inset: 0,
+        backgroundImage: `linear-gradient(hsla(38,45%,55%,0.03) 1px, transparent 1px), linear-gradient(90deg, hsla(38,45%,55%,0.03) 1px, transparent 1px)`,
+        backgroundSize: "80px 80px",
+      }} />
+      {/* Corner glows */}
+      <div aria-hidden style={{
+        position: "absolute", top: 0, right: 0, width: "360px", height: "360px",
+        background: `radial-gradient(circle at top right, hsla(38,45%,55%,0.07) 0%, transparent 65%)`,
+        pointerEvents: "none",
+      }} />
+
+      <div className="aurion-container" style={{ position: "relative", zIndex: 1 }}>
+        {/* Drawn rule */}
+        <div style={{ position: "relative", height: "1px", marginBottom: "3.5rem" }}>
+          <div style={{ position: "absolute", inset: 0, background: "rgba(245,238,228,0.07)" }} />
+          <div ref={ruleRef} style={{
+            position: "absolute", inset: 0,
+            background: `linear-gradient(90deg, ${C.gold}, ${C.primary}70, transparent)`,
+          }} />
+        </div>
+
+        <div ref={ref} style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "2.5rem",
+        }}>
+          {metrics.map((m, i) => (
+            <div key={i} className="mi" style={{ opacity: 0 }}>
+              <span className="font-heading font-bold block" style={{
+                fontSize: "clamp(2.4rem,4vw,3.8rem)",
+                color: C.offW, lineHeight: 1, letterSpacing: "-0.04em",
+                marginBottom: "0.5rem",
+              }}>
+                <CountUp value={m.value} suffix={m.suffix} />
+              </span>
+              <span className="font-body" style={{
+                fontSize: "0.72rem", color: C.offM,
+                textTransform: "uppercase", letterSpacing: "0.12em",
+              }}>
+                {m.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Bottom CTA ───────────────────────────────────────────────────────────────
+function BottomCta() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const items = el.querySelectorAll<HTMLElement>(".ci");
+    gsap.set(items, { opacity: 0, y: 28 });
+    const ctx = gsap.context(() => {
+      gsap.to(items, {
+        opacity: 1, y: 0, stagger: 0.12, duration: 0.9, ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 85%", once: true, invalidateOnRefresh: true },
+      });
+    }, el);
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <section style={{ background: C.bg, padding: "96px 0 120px" }}>
+      <div className="aurion-container">
+        <div ref={ref}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1fr",
+            gap: "4rem 6rem",
+            alignItems: "start",
+          }} className="md:grid-cols-2">
+
+            <div>
+              <span className="ci aurion-label block mb-5" style={{ opacity: 0, color: C.gold }}>
+                Work With Aurion
+              </span>
+              <h2 className="ci font-heading font-semibold" style={{
+                opacity: 0,
+                fontSize: "clamp(1.7rem,3vw,2.8rem)",
+                color: C.fg, lineHeight: 1.22, letterSpacing: "-0.022em",
+              }}>
+                Recognise any of these patterns in your organisation?
+              </h2>
+            </div>
+
+            <div style={{ paddingTop: "3.5rem" }}>
+              <p className="ci font-body mb-8" style={{
+                opacity: 0, fontSize: "0.95rem", color: C.muted, lineHeight: 1.82,
+              }}>
+                Every engagement starts with listening. We work with organisations already
+                experimenting — and help bring coherence without killing momentum.
+              </p>
+              <Link
+                to="/contact"
+                className="ci group relative inline-flex items-center gap-3 font-body font-medium rounded-sm overflow-hidden"
+                style={{
+                  opacity: 0, padding: "0.9rem 2rem", fontSize: "0.875rem",
+                  background: C.primary, color: "hsl(35,30%,96%)",
+                  textDecoration: "none", transition: "opacity 0.18s ease",
+                }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = "0.87"; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
+              >
+                <span aria-hidden className="absolute inset-0 bg-white/[0.08] -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                <span className="relative z-10">Start a conversation</span>
+                <span className="relative z-10 transition-transform duration-200 group-hover:translate-x-1" aria-hidden>→</span>
+              </Link>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+const CaseStudies = () => {
+  usePageMount();
   return (
     <>
       <Navbar />
       <main>
-        {/* ── Hero ── */}
-        <section className="aurion-section pb-12">
-          <div className="aurion-container">
-            <div ref={heroRef}>
-              <span
-                className="hero-item aurion-label mb-4 block"
-                style={{ opacity: 0 }}
-              >
-                Evidence in Practice
-              </span>
-              <h1
-                className="hero-item aurion-heading-xl max-w-3xl mb-6"
-                style={{ opacity: 0 }}
-              >
-                Real work. Real organisations. Practical outcomes.
-              </h1>
-              <div
-                className="hero-item aurion-divider mb-8"
-                style={{ opacity: 0 }}
-              />
-              <p
-                className="hero-item aurion-body-lg max-w-2xl"
-                style={{ opacity: 0 }}
-              >
-                These case studies reflect the kind of work Aurion does — helping
-                organisations move from fragmented AI experimentation to
-                structured, confident, responsible adoption. The details have been
-                anonymised to protect confidentiality.
-              </p>
-            </div>
-          </div>
+        <Hero />
+        <MarqueeStrip />
+
+        {/* ── Editorial study list ── */}
+        <section style={{ background: C.bg, padding: "56px 0 0" }}>
+          {studies.map((study, i) => (
+            <StudyRow
+              key={study.id}
+              study={study}
+              index={i}
+              isLast={i === studies.length - 1}
+            />
+          ))}
         </section>
 
-        {/* ── Index strip ── */}
-        <section
-          className="border-y py-8"
-          style={{ borderColor: "hsl(30,15%,85%)" }}
-        >
-          <div className="aurion-container">
-            <div className="flex flex-col md:flex-row gap-6 md:gap-12">
-              {studies.map((s, i) => (
-                <a
-                  key={i}
-                  href={`#${s.id}`}
-                  className="flex items-start gap-3 group"
-                >
-                  <span
-                    className="font-heading text-2xl font-bold opacity-30 leading-none pt-0.5"
-                    style={{ color: "hsl(0,55%,32%)" }}
-                  >
-                    {s.index}
-                  </span>
-                  <div>
-                    <span className="aurion-label block mb-1">{s.label}</span>
-                    <span className="font-body text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-200 leading-snug">
-                      {s.title}
-                    </span>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ── Case Studies ── */}
-        <section className="aurion-section">
-          <div className="aurion-container">
-            {studies.map((study, i) => (
-              <div key={study.id} id={study.id}>
-                <CaseStudyBlock study={study} index={i} />
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── Bottom CTA ── */}
-        <SectionReveal>
-          <section
-            className="py-20 md:py-28"
-            style={{ background: "hsl(15,20%,12%)" }}
-          >
-            <div className="aurion-container text-center">
-              <span
-                className="aurion-label mb-4 block"
-                style={{ color: "hsl(38,45%,62%)" }}
-              >
-                Work With Aurion
-              </span>
-              <h2
-                className="aurion-heading-lg mb-6 max-w-2xl mx-auto"
-                style={{ color: "hsl(35,25%,92%)" }}
-              >
-                Recognise any of these patterns in your organisation?
-              </h2>
-              <p
-                className="aurion-body max-w-xl mx-auto mb-10"
-                style={{ color: "hsl(35,15%,65%)" }}
-              >
-                Every engagement starts with listening. We work with organisations
-                already experimenting — and help bring coherence to that
-                experimentation without killing momentum.
-              </p>
-              <Link
-                to="/contact"
-                className="aurion-btn-primary"
-                style={{ borderRadius: "2px" }}
-              >
-                Start a conversation →
-              </Link>
-            </div>
-          </section>
-        </SectionReveal>
+        <PullQuote />
+        <MetricsBar />
+        <BottomCta />
       </main>
       <Footer />
     </>

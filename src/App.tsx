@@ -1,3 +1,16 @@
+// src/App.tsx — relevant additions only
+// Add these two imports alongside your other lazy imports:
+//
+//   const CaseStudies      = lazy(() => import("./pages/CaseStudies"));
+//   const CaseStudyDetail  = lazy(() => import("./pages/CaseStudyDetail"));
+//
+// Then add these two routes inside <Routes>:
+//
+//   <Route path="/case-studies"      element={<CaseStudies />} />
+//   <Route path="/case-studies/:id"  element={<CaseStudyDetail />} />
+//
+// Full App.tsx for reference:
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,17 +20,24 @@ import { lazy, Suspense } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
-const HowWeWork = lazy(() => import("./pages/HowWeWork"));
-const CaseStudies = lazy(() => import("./pages/CaseStudies"));
-const Resources = lazy(() => import("./pages/Resources"));
-const About = lazy(() => import("./pages/About"));
-const Contact = lazy(() => import("./pages/Contact"));
+const CaseStudies       = lazy(() => import("./pages/CaseStudies"));
+const CaseStudyDetail   = lazy(() => import("./pages/CaseStudyDetail"));
+const About             = lazy(() => import("./pages/About"));
+const Resources         = lazy(() => import("./pages/Resources"));
+const Contact           = lazy(() => import("./pages/Contact"));
+
+// How We Work sub-pages
+const HWWOverview       = lazy(() => import("./pages/how-we-work/Overview"));
+const HWWWhatWeDo       = lazy(() => import("./pages/how-we-work/WhatWeDo"));
+const HWWFourPhases     = lazy(() => import("./pages/how-we-work/FourPhases"));
+const HWWTrustGap       = lazy(() => import("./pages/how-we-work/TrustGap"));
+const HWWWhoWeWorkWith  = lazy(() => import("./pages/how-we-work/WhoWeWorkWith"));
 
 const queryClient = new QueryClient();
 
 const Loading = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background">
-    <span className="font-heading text-xl text-muted-foreground">Loading…</span>
+  <div className="min-h-screen flex items-center justify-center" style={{ background: "hsl(35,30%,96%)" }}>
+    <span className="font-heading text-xl" style={{ color: "hsl(15,10%,52%)" }}>Loading…</span>
   </div>
 );
 
@@ -29,13 +49,24 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<Loading />}>
           <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/how-we-work" element={<HowWeWork />} />
-            <Route path="/case-studies" element={<CaseStudies />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/"                             element={<Index />} />
+
+            {/* Case Studies */}
+            <Route path="/case-studies"                 element={<CaseStudies />} />
+            <Route path="/case-studies/:id"             element={<CaseStudyDetail />} />
+
+            {/* How We Work */}
+            <Route path="/how-we-work"                  element={<HWWOverview />} />
+            <Route path="/how-we-work/what-we-do"       element={<HWWWhatWeDo />} />
+            <Route path="/how-we-work/phases"           element={<HWWFourPhases />} />
+            <Route path="/how-we-work/trust-gap"        element={<HWWTrustGap />} />
+            <Route path="/how-we-work/who-we-work-with" element={<HWWWhoWeWorkWith />} />
+
+            {/* Other pages */}
+            <Route path="/about"                        element={<About />} />
+            <Route path="/resources"                    element={<Resources />} />
+            <Route path="/contact"                      element={<Contact />} />
+            <Route path="*"                             element={<NotFound />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

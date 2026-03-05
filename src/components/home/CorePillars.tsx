@@ -1,35 +1,26 @@
+import { Link } from "react-router-dom";
 import SectionReveal from "@/motion/SectionReveal";
 import HoverAnimator from "@/motion/HoverAnimator";
 
 type Pillar = {
   title: string;
-  items: string[];
+  oneLiner: string;
 };
 
 const pillars: Pillar[] = [
   {
     title: "Sensemaking & Readiness",
-    items: [
-      "Understand how AI is currently being used",
-      "Surface risks, opportunities, and behaviours",
-      "Create shared language and alignment",
-    ],
+    oneLiner:
+      "Organisations cannot design responsible AI adoption until they understand what is already happening.",
   },
   {
     title: "Workflow Enablement",
-    items: [
-      "Design repeatable AI-supported workflows",
-      "Create learning assets, playbooks, and prompts",
-      "Move from individual experimentation to team standards",
-    ],
+    oneLiner: "AI becomes sustainable when it fits naturally into real work.",
   },
   {
     title: "Adoption Operations",
-    items: [
-      "Enable champion communities",
-      "Establish communication and enablement rhythms",
-      "Measure adoption and iterate",
-    ],
+    oneLiner:
+      "Adoption grows when communication, champions, and rhythms support it.",
   },
 ];
 
@@ -44,34 +35,33 @@ const CorePillars = () => (
         <div className="aurion-divider mb-14" />
       </SectionReveal>
 
-      {/* 1 col on mobile → 2 col on md tablet → 3 col on lg+ */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {pillars.map((pillar, i) => (
-          <SectionReveal key={i} delay={i * 0.12}>
+          <SectionReveal key={pillar.title} delay={i * 0.12}>
             <HoverAnimator>
               <div className="aurion-card h-full flex flex-col">
                 <span className="aurion-label text-primary mb-3 block">
                   Pillar {i + 1}
                 </span>
-                <h3 className="aurion-heading-md mb-6 leading-snug">
+                <h3 className="aurion-heading-md mb-4 leading-snug">
                   {pillar.title}
                 </h3>
-                <ul className="space-y-4 flex-1">
-                  {pillar.items.map((item, j) => (
-                    <li
-                      key={j}
-                      className="flex items-start gap-3 text-sm md:text-base font-body leading-relaxed text-muted-foreground"
-                    >
-                      <span className="mt-[7px] w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+                <p className="aurion-body text-sm md:text-base flex-1">
+                  {pillar.oneLiner}
+                </p>
               </div>
             </HoverAnimator>
           </SectionReveal>
         ))}
       </div>
+
+      <SectionReveal delay={0.25}>
+        <div className="mt-12">
+          <Link to="/how-we-work" className="aurion-btn-primary">
+            See the full approach
+          </Link>
+        </div>
+      </SectionReveal>
     </div>
   </section>
 );

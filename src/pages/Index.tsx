@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import AurionLine from "@/motion/AurionLine";
 import HeroSection from "@/components/home/HeroSection";
 import CurrentReality from "@/components/home/CurrentReality";
+import TrustGap from "@/components/home/TrustGap";
 import CorePillars from "@/components/home/CorePillars";
 import HowWeWorkSection from "@/components/home/HowWeWorkSection";
 import ProofSection from "@/components/home/ProofSection";
@@ -17,6 +18,7 @@ const Index = () => {
       <main className="relative z-10">
         <HeroSection />
         <CurrentReality />
+        <TrustGap />
         <CorePillars />
         <HowWeWorkSection />
         <ProofSection />
