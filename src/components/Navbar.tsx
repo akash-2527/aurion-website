@@ -2,6 +2,9 @@ import { useRef, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import gsap from "gsap";
 
+// Import the logo image
+import logoImage from "@/assets/logo.png";
+
 // ─── Dropdown items — exact paths match page routes ───────────────────────────
 // Active state is checked per-item against location.pathname (exact match).
 const hwwItems = [
@@ -150,9 +153,19 @@ const Navbar = () => {
           <div className="flex items-center justify-between"
             style={{ padding: scrolled ? "0 22px" : "0 48px", height: scrolled ? "52px" : "72px", transition: tr("padding", "height") }}>
 
-            {/* Logo */}
-            <Link to="/" style={{ fontFamily: "var(--font-heading,serif)", fontSize: "1.2rem", fontWeight: 700, letterSpacing: "0.04em", color: AC, textDecoration: "none", flexShrink: 0 }}>
-              Aurion
+            {/* Logo - replaced text with image */}
+            <Link to="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+              <img 
+                src={logoImage} 
+                alt="Aurion" 
+                style={{ 
+                  height: scrolled ? "100px" : "100px",
+                  width: "auto",
+                  transition: tr("height"),
+                  objectFit: "contain",
+                  display: "block"
+                }} 
+              />
             </Link>
 
             {/* Desktop nav */}
