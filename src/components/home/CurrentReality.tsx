@@ -19,7 +19,7 @@ const cards: Card[] = [
     title: "AI is already here",
     summary: "People are using AI in pockets. Some confidently. Some quietly. Some with hesitation.",
     insightLabel: "What this means",
-    insight: "The question is no longer whether AI is present — it's whether your organisation has the frameworks to guide it.",
+    insight: "The question is no longer whether AI is present  it's whether your organisation has the frameworks to guide it.",
   },
   {
     number: "02",
@@ -33,7 +33,7 @@ const cards: Card[] = [
     title: "Leaders want clarity",
     summary: "Most leadership teams want responsible adoption but lack visibility into what is actually happening.",
     insightLabel: "What this means",
-    insight: "Clarity starts with understanding what your people are already doing — before designing what they should do.",
+    insight: "Clarity starts with understanding what your people are already doing  before designing what they should do.",
   },
   {
     number: "04",

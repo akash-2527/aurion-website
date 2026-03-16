@@ -7,7 +7,7 @@ const goodFit = [
   { label: "Mid-to-large organisations navigating AI rollout",         desc: "Organisations with enough scale that AI adoption becomes a governance and culture challenge, not just a tooling decision." },
   { label: "Leadership teams seeking clarity and alignment",            desc: "Senior teams who recognise they need a shared framework before they can lead AI adoption effectively." },
   { label: "HR, L&D, and enablement teams building capability",        desc: "Functions responsible for making AI adoption practical, safe, and sustainable across the workforce." },
-  { label: "Operations teams redesigning workflows for AI",             desc: "Teams looking to embed AI into real work processes — not just experiment with tools." },
+  { label: "Operations teams redesigning workflows for AI",             desc: "Teams looking to embed AI into real work processes  not just experiment with tools." },
   { label: "Organisations experiencing shadow AI",                     desc: "Where informal AI use is already happening and leadership wants to understand and govern it." },
   { label: "Organisations wanting to reduce risk and increase confidence", desc: "Leadership teams who see adoption as a risk management priority as much as a capability one." },
 ];
@@ -53,7 +53,7 @@ const WhoWeWorkWith = () => {
         <PageHero
           section="Who We Work With"
           headline="Organisations that want to adopt AI responsibly."
-          sub="Aurion works with organisations that recognise AI adoption is an organisational challenge — not just a technology one — and want to approach it with clarity, governance, and practical enablement."
+          sub="Aurion works with organisations that recognise AI adoption is an organisational challenge  not just a technology one  and want to approach it with clarity, governance, and practical enablement."
           ctaTo="/contact"
         />
 

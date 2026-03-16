@@ -113,7 +113,7 @@ const FourPhases = () => {
         <PageHero
           section="The Four Phase Model"
           headline="One clear path. Four focused phases."
-          sub="Every engagement follows a structured but flexible model — designed to meet organisations where they are and move them toward embedded, responsible AI usage."
+          sub="Every engagement follows a structured but flexible model  designed to meet organisations where they are and move them toward embedded, responsible AI usage."
           ctaTo="/contact"
         />
 
@@ -123,7 +123,7 @@ const FourPhases = () => {
               <SLabel>The Model</SLabel>
               <h2 className="aurion-heading-lg max-w-2xl mb-4">Each phase builds on the last.</h2>
               <p className="font-body max-w-xl" style={{ fontSize: "1.05rem", color: T.muted, lineHeight: 1.7 }}>
-                The model is flexible — some engagements start at Phase 2 or 3. But the logic always flows the same way: understand first, then build, then deploy, then demonstrate.
+                The model is flexible  some engagements start at Phase 2 or 3. But the logic always flows the same way: understand first, then build, then deploy, then demonstrate.
               </p>
             </div>
 

@@ -25,7 +25,7 @@ export const studies: Study[] = [
     sector: "Public Sector",
     title: "Creating Confidence Around AI in a Complex Cultural Institution",
     intro:
-      "A large, publicly funded cultural institution with 1,200+ staff — spanning curatorial, security, education, visitor services, operations, and corporate teams. Work was deeply values-led, highly regulated, and publicly accountable. AI was already entering the organisation quietly.",
+      "A large, publicly funded cultural institution with 1,200+ staff  spanning curatorial, security, education, visitor services, operations, and corporate teams. Work was deeply values-led, highly regulated, and publicly accountable. AI was already entering the organisation quietly.",
     stats: [
       { value: "1,200+", label: "Staff reached across departments" },
       { value: "70%+",   label: "Increase in manager confidence" },
@@ -82,7 +82,7 @@ export const studies: Study[] = [
     sector: "Professional Services",
     title: "Embedding AI Into Everyday HR & Learning Workflows",
     intro:
-      "This organisation was already digitally capable, but AI use was inconsistent and uneven. HR and Learning teams were under pressure to move faster, produce more content, and support managers at scale. AI tools had started to appear organically — recruiters experimenting with prompts, L&D teams testing content generation.",
+      "This organisation was already digitally capable, but AI use was inconsistent and uneven. HR and Learning teams were under pressure to move faster, produce more content, and support managers at scale. AI tools had started to appear organically  recruiters experimenting with prompts, L&D teams testing content generation.",
     stats: [
       { value: "30+",    label: "HR & L&D professionals supported" },
       { value: "35–40%", label: "Reduction in repeat content task time" },
@@ -123,7 +123,7 @@ export const studies: Study[] = [
     },
     whyMatters: [
       "HR and L&D teams sit at the centre of organisational change.",
-      "When they adopt AI with clarity — managers follow, standards spread, adoption scales responsibly.",
+      "When they adopt AI with clarity  managers follow, standards spread, adoption scales responsibly.",
       "This work demonstrated how internal enablement beats external tooling.",
     ],
     cta: {
@@ -171,7 +171,7 @@ export const studies: Study[] = [
         "AI use became visible, discussable, and improvable",
       ],
       tags: [
-        "The organisation gained leverage — not complexity",
+        "The organisation gained leverage  not complexity",
         "AI became something the team owned, not outsourced",
         "Single-source documentation created for ongoing use",
       ],

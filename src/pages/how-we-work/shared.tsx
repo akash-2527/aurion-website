@@ -26,14 +26,8 @@ export const T = {
 } as const;
 
 // ─── usePageMount ──────────────────────────────────────────────────────────────
-// Call at top of every page component.
-// Fixes "content invisible on navigation" by:
-//   1. Scrolling to top before GSAP runs
-//   2. Clearing stale ScrollTrigger memory
-//   3. Two-pass refresh (50ms + 350ms) after layout + fonts settle
 export function usePageMount() {
   useEffect(() => {
-    // Must happen synchronously before any GSAP set() calls
     window.scrollTo(0, 0);
     ScrollTrigger.clearScrollMemory();
 
@@ -44,8 +38,6 @@ export function usePageMount() {
 }
 
 // ─── useScrollReveal ──────────────────────────────────────────────────────────
-// Scroll-triggered fade/slide. start() is a function so positions recalculate
-// on every refresh(). "top 92%" is generous enough to catch elements near top.
 export function useScrollReveal(
   ref:  React.RefObject<HTMLElement | HTMLDivElement | null>,
   opts?: { x?: number; y?: number; delay?: number; start?: string; duration?: number }
@@ -74,8 +66,7 @@ export function useScrollReveal(
 }
 
 // ─── use3DTilt ────────────────────────────────────────────────────────────────
-// Magnetic 3D tilt — RAF only runs while cursor is inside the card.
-// 40ms debounce on leave absorbs gap-flicker between adjacent cards.
+// FIXED: Added safe gradient handling to prevent GSAP color parsing errors
 export function use3DTilt(
   outerRef: React.RefObject<HTMLDivElement | null>,
   innerRef: React.RefObject<HTMLDivElement | null>,
@@ -103,8 +94,18 @@ export function use3DTilt(
         cGX += (tGX - cGX) * 0.07; cGY += (tGY - cGY) * 0.07;
         inner.style.transform =
           `perspective(900px) rotateX(${cRX}deg) rotateY(${cRY}deg)`;
-        glow.style.background =
-          `radial-gradient(circle at ${cGX}% ${cGY}%, hsla(0,55%,32%,0.055) 0%, transparent 65%)`;
+        
+        // FIXED: Safely set gradient - ensure values are valid numbers
+        const safeGX = Math.min(100, Math.max(0, cGX));
+        const safeGY = Math.min(100, Math.max(0, cGY));
+        
+        if (!isNaN(safeGX) && !isNaN(safeGY)) {
+          glow.style.background =
+            `radial-gradient(circle at ${safeGX}% ${safeGY}%, hsla(0,55%,32%,0.055) 0%, transparent 65%)`;
+        } else {
+          glow.style.background = 'none';
+        }
+        
         rafRef.current = requestAnimationFrame(tick);
       };
       rafRef.current = requestAnimationFrame(tick);
@@ -115,8 +116,13 @@ export function use3DTilt(
       isHovered.current = true;
       startRAF();
       const r  = card.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width;
-      const ny = (e.clientY - r.top)  / r.height;
+      
+      // FIXED: Add bounds checking
+      if (r.width === 0 || r.height === 0) return;
+      
+      const nx = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+      const ny = Math.min(1, Math.max(0, (e.clientY - r.top)  / r.height));
+      
       tRY = (nx - 0.5) * maxTilt * 1.6;
       tRX = -(ny - 0.5) * maxTilt;
       tGX = nx * 100; tGY = ny * 100;
@@ -126,16 +132,39 @@ export function use3DTilt(
       debRef.current = setTimeout(() => {
         isHovered.current = false;
         tRX = 0; tRY = 0; tGX = 50; tGY = 50;
-        gsap.to(inner, { rotateX: 0, rotateY: 0, duration: 0.5, ease: "power3.out", force3D: true, overwrite: true });
-        gsap.to(glow,  { opacity: 0, duration: 0.3, ease: "power2.out", overwrite: true,
-          onComplete: () => { glow.style.opacity = "1"; glow.style.background = "none"; } });
+        
+        // FIXED: Use GSAP to animate to safe values
+        gsap.to(inner, { 
+          rotateX: 0, 
+          rotateY: 0, 
+          duration: 0.5, 
+          ease: "power3.out", 
+          force3D: true, 
+          overwrite: true 
+        });
+        
+        gsap.to(glow, { 
+          opacity: 0, 
+          duration: 0.3, 
+          ease: "power2.out", 
+          overwrite: true,
+          onComplete: () => { 
+            glow.style.opacity = "1"; 
+            glow.style.background = "none"; 
+          } 
+        });
       }, 40);
     };
 
     const onMove = (e: MouseEvent) => {
       const r  = card.getBoundingClientRect();
-      const nx = (e.clientX - r.left) / r.width;
-      const ny = (e.clientY - r.top)  / r.height;
+      
+      // FIXED: Add bounds checking
+      if (r.width === 0 || r.height === 0) return;
+      
+      const nx = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+      const ny = Math.min(1, Math.max(0, (e.clientY - r.top)  / r.height));
+      
       tRY = (nx - 0.5) * maxTilt * 1.6;
       tRX = -(ny - 0.5) * maxTilt;
       tGX = nx * 100; tGY = ny * 100;
@@ -217,7 +246,7 @@ export function SLabel({ children, light = false }: { children: React.ReactNode;
   );
 }
 
-// ─── PageHero (shared across all HWW pages) ──────────────────────────────────
+// ─── PageHero ─────────────────────────────────────────────────────────────────
 export function PageHero({
   section, headline, sub, ctaTo, ctaLabel = "Book a clarity call",
 }: {
@@ -236,7 +265,6 @@ export function PageHero({
     if (!label || !sub || !cta) return;
     gsap.set([label, sub, cta], { opacity: 0, y: 12, force3D: true });
     const ctx = gsap.context(() => {
-      // word reveal takes ≈ headline.split(" ").length * 0.055 + 0.68 + 0.32 s
       const wordCount = headline.split(" ").length;
       const revealEnd = 0.32 + wordCount * 0.055 + 0.68;
       gsap.to(label, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.1, force3D: true });
@@ -248,7 +276,6 @@ export function PageHero({
 
   return (
     <section style={{ background: T.bg, padding: "80px 0 88px", position: "relative", overflow: "hidden" }}>
-      {/* Warm glow top-right */}
       <div aria-hidden="true" style={{ position: "absolute", top: "-20%", right: "-8%", width: "50vw", height: "75vh", background: `radial-gradient(ellipse at top right, hsla(0,55%,32%,0.055) 0%, transparent 65%)`, filter: "blur(44px)", pointerEvents: "none" }} />
       <div className="aurion-container relative z-10">
         <span ref={labelRef} style={{ opacity: 0 }}><SLabel>{section}</SLabel></span>

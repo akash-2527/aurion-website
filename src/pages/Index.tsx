@@ -4,7 +4,7 @@ import AurionLine from "@/motion/AurionLine";
 import HeroSection from "@/components/home/HeroSection";
 import CurrentReality from "@/components/home/CurrentReality";
 import TrustGap from "@/components/home/TrustGap";
-import CorePillars from "@/components/home/CorePillars";
+// import CorePillars from "@/components/home/CorePillars";
 import HowWeWorkSection from "@/components/home/HowWeWorkSection";
 import ProofSection from "@/components/home/ProofSection";
 import ToolsSection from "@/components/home/ToolsSection";
@@ -19,7 +19,7 @@ const Index = () => {
         <HeroSection />
         <CurrentReality />
         <TrustGap />
-        <CorePillars />
+        {/* <CorePillars /> */}
         <HowWeWorkSection />
         <ProofSection />
         <ToolsSection />

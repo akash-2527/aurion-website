@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import heroBg from "@/assets/hero-bg.jpg";
+import teamPhoto from "@/assets/hero-team.jpg"; // <-- add your image here as hero-team.jpg
 import HoverAnimator from "@/motion/HoverAnimator";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ─── Word-by-word reveal ──────────────────────────────────────────────────────
 function WordReveal({
@@ -21,38 +25,23 @@ function WordReveal({
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-
-    const words = Array.from(
-      container.querySelectorAll<HTMLSpanElement>(".w-word")
-    );
+    const words = Array.from(container.querySelectorAll<HTMLSpanElement>(".w-word"));
     if (!words.length) return;
-
     gsap.set(words, { opacity: 0, y: 20, filter: "blur(5px)" });
-
     const ctx = gsap.context(() => {
       gsap.to(words, {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        duration: 0.7,
-        ease: "power3.out",
-        stagger,
-        delay: baseDelay,
+        opacity: 1, y: 0, filter: "blur(0px)",
+        duration: 0.7, ease: "power3.out",
+        stagger, delay: baseDelay,
       });
     }, container);
-
     return () => ctx.revert();
   }, [baseDelay, stagger]);
 
   return (
     <span ref={containerRef} className={className} aria-label={text}>
       {text.split(" ").map((word, i) => (
-        <span
-          key={i}
-          className="w-word inline-block"
-          style={{ marginRight: "0.26em", opacity: 0 }}
-          aria-hidden="true"
-        >
+        <span key={i} className="w-word inline-block" style={{ marginRight: "0.26em", opacity: 0 }} aria-hidden="true">
           {word}
         </span>
       ))}
@@ -60,104 +49,204 @@ function WordReveal({
   );
 }
 
-// ─── Cycling voices widget ────────────────────────────────────────────────────
-const voices = [
-  {
-    quote: "We know people are using ChatGPT for work. We just don't know how.",
-    role: "Head of Operations",
-  },
-  {
-    quote: "I want to say yes to AI — I just don't know what yes looks like yet.",
-    role: "Senior Manager",
-  },
-  {
-    quote:
-      "Our team is ready. The organisation hasn't caught up with them yet.",
-    role: "L&D Director",
-  },
-  {
-    quote:
-      "We rolled out the tool. Nobody told us adoption was a different problem.",
-    role: "Chief Digital Officer",
-  },
-];
+// ─── HeroImage — geometric reveal + parallax ─────────────────────────────────
+// The image is revealed with an expanding clip-path (angled parallelogram).
+// On scroll it drifts upward. On mouse it shifts slightly, giving depth.
+function HeroImage() {
+  const wrapRef  = useRef<HTMLDivElement>(null);
+  const imgRef   = useRef<HTMLImageElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
-function VoicesWidget() {
-  const [active, setActive] = useState(0);
-  const [fading, setFading] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const goTo = (next: number) => {
-    if (fading) return;
-    setFading(true);
-    setTimeout(() => {
-      setActive(next);
-      setFading(false);
-    }, 320);
-  };
-
-  // Auto-advance
+  // ── Entrance: clip-path sweeps open, image scales down ──────────────────
   useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setFading(true);
-      setTimeout(() => {
-        setActive((a) => (a + 1) % voices.length);
-        setFading(false);
-      }, 320);
-    }, 4200);
+    const wrap = wrapRef.current;
+    const img  = imgRef.current;
+    if (!wrap || !img) return;
+
+    // Start: fully clipped (zero width reveal), image scaled up
+    gsap.set(wrap, {
+      clipPath: "polygon(8% 0%, 8% 0%, 8% 100%, 8% 100%)",
+      immediateRender: true,
+    });
+    gsap.set(img, { scale: 1.14, force3D: true, immediateRender: true });
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ delay: 0.6 });
+      // Clip sweeps from left to right — angled leading edge creates the
+      // parallelogram shape and gives it a dynamic, editorial feel
+      tl.to(wrap, {
+        clipPath: "polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)",
+        duration: 1.1, ease: "power3.inOut",
+      })
+      // Simultaneously scale image down to natural size
+        .to(img, {
+          scale: 1, duration: 1.4, ease: "power2.out", force3D: true,
+        }, 0);
+    }, wrap);
+
+    return () => ctx.revert();
+  }, []);
+
+  // ── Scroll parallax: image drifts upward at 0.3× scroll speed ──────────
+  useEffect(() => {
+    const img = imgRef.current;
+    const wrap = wrapRef.current;
+    if (!img || !wrap) return;
+    const ctx = gsap.context(() => {
+      gsap.to(img, {
+        y: -60, ease: "none",
+        scrollTrigger: {
+          trigger: wrap,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: 1.2,
+          invalidateOnRefresh: true,
+        },
+      });
+    }, wrap);
+    return () => ctx.revert();
+  }, []);
+
+  // ── Mouse parallax: subtle opposite-direction shift ──────────────────────
+  useEffect(() => {
+    const img  = imgRef.current;
+    const wrap = wrapRef.current;
+    if (!img || !wrap) return;
+
+    let rafId: number;
+    let tx = 0, ty = 0, cx = 0, cy = 0;
+
+    const onMove = (e: MouseEvent) => {
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      // Shift opposite cursor: creates depth illusion
+      tx = ((e.clientX / vw) - 0.5) * -14;
+      ty = ((e.clientY / vh) - 0.5) * -8;
+    };
+
+    const tick = () => {
+      cx += (tx - cx) * 0.055;
+      cy += (ty - cy) * 0.055;
+      img.style.transform = `scale(1) translate(${cx}px, ${cy}px)`;
+      rafId = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener("mousemove", onMove, { passive: true });
+    rafId = requestAnimationFrame(tick);
+
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      window.removeEventListener("mousemove", onMove);
+      cancelAnimationFrame(rafId);
     };
   }, []);
 
-  const v = voices[active];
-
   return (
-    <div className="bg-card/80 border border-border rounded-sm p-7 backdrop-blur-sm">
-      {/* Label */}
-      <p className="aurion-label mb-5 block">
-        Heard in organisations we work with
-      </p>
+    <div className="relative h-full hidden lg:flex items-center justify-end">
+      {/* Outer wrapper controls clip-path shape */}
+      <div
+        ref={wrapRef}
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "520px",
+          // Clip starts fully closed — GSAP will open it
+          clipPath: "polygon(8% 0%, 8% 0%, 8% 100%, 8% 100%)",
+          willChange: "clip-path",
+          overflow: "hidden",
+          borderRadius: "2px",
+        }}
+      >
+        {/* Image */}
+        <img
+          ref={imgRef}
+          src={teamPhoto}
+          alt="Professional team in discussion"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center 20%",
+            display: "block",
+            willChange: "transform",
+            transformOrigin: "center center",
+          }}
+        />
 
-      {/* Quote — fixed min-height prevents layout shift during transition */}
-      <div style={{ minHeight: "96px" }}>
-        <p
-          className="font-heading text-lg md:text-xl text-foreground leading-snug mb-3 transition-opacity duration-300"
-          style={{ opacity: fading ? 0 : 1 }}
-        >
-          "{v.quote}"
-        </p>
-        <p
-          className="text-xs font-body text-muted-foreground/70 tracking-wide transition-opacity duration-300"
-          style={{ opacity: fading ? 0 : 1 }}
-        >
-          — {v.role}
-        </p>
+        {/* Colour grade overlay — warm tint to match site palette */}
+        <div
+          ref={overlayRef}
+          aria-hidden="true"
+          style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(135deg, hsla(0,55%,32%,0.12) 0%, hsla(38,45%,55%,0.06) 50%, transparent 75%)",
+            mixBlendMode: "multiply",
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* Bottom fade — bleeds into background */}
+        <div aria-hidden="true" style={{
+          position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
+          background: "linear-gradient(to top, hsl(var(--background)) 0%, transparent 100%)",
+          pointerEvents: "none",
+        }} />
       </div>
 
-      {/* Progress dots — clickable */}
-      <div className="flex gap-2 mt-6">
-        {voices.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => goTo(i)}
-            aria-label={`Show quote ${i + 1}`}
-            className="focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded-full"
-          >
-            <span
-              className="block rounded-full transition-all duration-400"
-              style={{
-                width: i === active ? "20px" : "6px",
-                height: "6px",
-                backgroundColor:
-                  i === active
-                    ? "hsl(var(--primary))"
-                    : "hsl(var(--border))",
-              }}
-            />
-          </button>
-        ))}
+      {/* Floating stat badge — appears after image reveal ──────────────── */}
+      <StatBadge />
+    </div>
+  );
+}
+
+// ─── Floating badge overlaid on image ────────────────────────────────────────
+function StatBadge() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    gsap.set(el, { opacity: 0, y: 16, scale: 0.94, force3D: true, immediateRender: true });
+    gsap.to(el, {
+      opacity: 1, y: 0, scale: 1,
+      duration: 0.75, ease: "back.out(1.3)",
+      delay: 1.85, force3D: true,
+    });
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        position: "absolute",
+        bottom: "2.5rem",
+        left: "-1.5rem",
+        opacity: 0,
+        zIndex: 10,
+      }}
+    >
+      <div
+        className="bg-card border border-border rounded-sm"
+        style={{
+          padding: "1rem 1.35rem",
+          boxShadow: "0 8px 32px -6px rgba(0,0,0,0.18)",
+          backdropFilter: "blur(8px)",
+          minWidth: "200px",
+        }}
+      >
+        <p
+          className="font-heading font-semibold text-foreground leading-none"
+          style={{ fontSize: "1.6rem", marginBottom: "0.3rem" }}
+        >
+          People-first
+        </p>
+        <p
+          className="font-body text-muted-foreground"
+          style={{ fontSize: "0.78rem", letterSpacing: "0.06em" }}
+        >
+          AI adoption that actually sticks
+        </p>
+        {/* Small primary accent rule */}
+        <div style={{ height: "2px", width: "32px", background: "hsl(var(--primary))", marginTop: "0.75rem", borderRadius: "1px" }} />
       </div>
     </div>
   );
@@ -171,7 +260,6 @@ const HeroSection = () => {
   const subRef     = useRef<HTMLParagraphElement>(null);
   const ctaRef     = useRef<HTMLDivElement>(null);
   const noteRef    = useRef<HTMLParagraphElement>(null);
-  const widgetRef  = useRef<HTMLDivElement>(null);
 
   // ── Mouse-reactive orb ────────────────────────────────────────────────────
   useEffect(() => {
@@ -180,14 +268,12 @@ const HeroSection = () => {
     if (!section || !orb) return;
 
     let rafId: number;
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
+    let targetX = 0, targetY = 0;
+    let currentX = 0, currentY = 0;
 
     const onMouseMove = (e: MouseEvent) => {
       const rect = section.getBoundingClientRect();
-      targetX = ((e.clientX - rect.left) / rect.width - 0.5) * 55;
+      targetX = ((e.clientX - rect.left) / rect.width  - 0.5) * 55;
       targetY = ((e.clientY - rect.top)  / rect.height - 0.5) * 38;
     };
 
@@ -209,43 +295,23 @@ const HeroSection = () => {
 
   // ── Entrance animations ───────────────────────────────────────────────────
   useEffect(() => {
+    const label  = labelRef.current;
+    const sub    = subRef.current;
+    const cta    = ctaRef.current;
+    const note   = noteRef.current;
     const section = sectionRef.current;
-    const label   = labelRef.current;
-    const sub     = subRef.current;
-    const cta     = ctaRef.current;
-    const note    = noteRef.current;
-    const widget  = widgetRef.current;
+    if (!label || !sub || !cta || !section) return;
 
-    if (!section || !label || !sub || !cta) return;
+    gsap.set([label, sub, cta], { opacity: 0, y: 12, force3D: true, immediateRender: true });
+    if (note) gsap.set(note, { opacity: 0, immediateRender: true });
 
-    gsap.set(label,  { opacity: 0, y: 10 });
-    gsap.set(sub,    { opacity: 0, y: 16 });
-    gsap.set(cta,    { opacity: 0, y: 12 });
-    if (note)   gsap.set(note,   { opacity: 0 });
-    if (widget) gsap.set(widget, { opacity: 0, y: 18 });
+    const afterWords = 1.9; // wait for word reveal to mostly finish
 
     const ctx = gsap.context(() => {
-      gsap.to(label, {
-        opacity: 1, y: 0, duration: 0.65, ease: "power2.out", delay: 0.15,
-      });
-
-      const afterWords = 1.9;
-      gsap.to(sub, {
-        opacity: 1, y: 0, duration: 0.8, ease: "power2.out", delay: afterWords,
-      });
-      gsap.to(cta, {
-        opacity: 1, y: 0, duration: 0.7, ease: "power2.out", delay: afterWords + 0.2,
-      });
-      if (note) {
-        gsap.to(note, {
-          opacity: 1, duration: 0.6, ease: "power2.out", delay: afterWords + 0.45,
-        });
-      }
-      if (widget) {
-        gsap.to(widget, {
-          opacity: 1, y: 0, duration: 0.85, ease: "power2.out", delay: afterWords + 0.15,
-        });
-      }
+      gsap.to(label, { opacity: 1, y: 0, duration: 0.65, ease: "power2.out", delay: 0.15, force3D: true });
+      gsap.to(sub,   { opacity: 1, y: 0, duration: 0.8,  ease: "power2.out", delay: afterWords,        force3D: true });
+      gsap.to(cta,   { opacity: 1, y: 0, duration: 0.7,  ease: "power2.out", delay: afterWords + 0.2,  force3D: true });
+      if (note) gsap.to(note, { opacity: 1, duration: 0.6, ease: "power2.out", delay: afterWords + 0.45 });
     }, section);
 
     return () => ctx.revert();
@@ -263,7 +329,6 @@ const HeroSection = () => {
           alt=""
           className="w-full h-full object-cover opacity-[0.15]"
           loading="eager"
-          fetchpriority="high"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/93 to-background/68" />
       </div>
@@ -274,12 +339,9 @@ const HeroSection = () => {
         aria-hidden="true"
         className="absolute pointer-events-none rounded-full"
         style={{
-          top: "44%",
-          left: "60%",
-          width: "580px",
-          height: "580px",
-          background:
-            "radial-gradient(circle, hsl(var(--primary)/0.11) 0%, hsl(var(--accent)/0.05) 55%, transparent 78%)",
+          top: "44%", left: "38%",
+          width: "580px", height: "580px",
+          background: "radial-gradient(circle, hsl(var(--primary)/0.10) 0%, hsl(var(--accent)/0.04) 55%, transparent 78%)",
           transform: "translate(-50%, -50%)",
           filter: "blur(48px)",
           animation: "orbPulse 7s ease-in-out infinite",
@@ -293,11 +355,10 @@ const HeroSection = () => {
       `}</style>
 
       <div className="relative z-10 aurion-container w-full pt-28 pb-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-14 lg:gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-14 lg:gap-16 items-center">
 
-          {/* ── Main copy ─────────────────────────────────────────────────── */}
-          <div className="lg:col-span-8">
-
+          {/* ── Left: copy ─────────────────────────────────────────────────── */}
+          <div className="lg:col-span-6 xl:col-span-7">
             <span
               ref={labelRef}
               className="aurion-label mb-7 block"
@@ -316,7 +377,7 @@ const HeroSection = () => {
 
             <p
               ref={subRef}
-              className="aurion-body-lg max-w-[540px] mb-12"
+              className="aurion-body-lg max-w-[520px] mb-12"
               style={{ opacity: 0 }}
             >
               Aurion helps organisations move from quiet, inconsistent AI use to
@@ -368,20 +429,16 @@ const HeroSection = () => {
             </p>
           </div>
 
-          {/* ── Voices widget ─────────────────────────────────────────────── */}
-          <div
-            ref={widgetRef}
-            className="lg:col-span-4 hidden lg:block lg:mt-6"
-            style={{ opacity: 0 }}
-          >
-            <VoicesWidget />
+          {/* ── Right: image with geometric reveal ─────────────────────────── */}
+          <div className="lg:col-span-6 xl:col-span-5">
+            <HeroImage />
           </div>
 
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <div
+      {/* <div
         className="absolute bottom-9 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
         aria-hidden="true"
       >
@@ -389,7 +446,7 @@ const HeroSection = () => {
           Scroll
         </span>
         <span className="w-px h-7 bg-muted-foreground/25 animate-pulse" />
-      </div>
+      </div> */}
     </section>
   );
 };

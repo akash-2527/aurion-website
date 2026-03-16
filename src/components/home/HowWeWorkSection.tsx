@@ -305,7 +305,7 @@ const HowWeWorkSection = () => {
               lineHeight: 1.7,
             }}
           >
-            Full detail — including how each pillar works in practice — lives on
+            Full detail  including how each pillar works in practice  lives on
             the How We Work page.
           </p>
 

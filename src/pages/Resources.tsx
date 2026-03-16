@@ -19,7 +19,7 @@ const resources: Resource[] = [
   },
   {
     title: "AI-Enabled Onboarding Workflow",
-    desc: "An example of how AI can be embedded into an existing onboarding process — demonstrating practical integration without disruption.",
+    desc: "An example of how AI can be embedded into an existing onboarding process  demonstrating practical integration without disruption.",
     url: "https://ai-onboarding-assistant.netlify.app/",
     status: "Live",
   },
