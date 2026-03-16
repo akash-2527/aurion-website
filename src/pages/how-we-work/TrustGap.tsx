@@ -5,6 +5,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { T, usePageMount, useScrollReveal, PageHero, ShimmerBtn, SLabel } from "./shared";
 
+// Import the founder image
+import founderImage from "@/assets/dp.webp";
+
 gsap.registerPlugin(ScrollTrigger);
 
 const trustNodes = [
@@ -384,11 +387,31 @@ const TrustGap = () => {
                   This is fundamentally a psychological contract issue. People want to know what is safe,
                   what is valued, and what will change. When leaders do not say it, teams fill the gaps themselves.
                 </p>
-                <div className="flex items-center justify-center gap-4">
-                  <div style={{ width: "44px", height: "44px", borderRadius: "50%", background: `${T.primary}12`, border: `1px solid ${T.border}`, flexShrink: 0 }} />
+                <div className="flex items-center justify-center gap-6">
+                  {/* Updated circular div with image - increased size */}
+                  <div style={{ 
+                    width: "60px", 
+                    height: "60px", 
+                    borderRadius: "50%", 
+                    overflow: "hidden",
+                    border: `2px solid ${T.primary}`,
+                    boxShadow: `0 4px 12px ${T.primary}30`,
+                    flexShrink: 0 
+                  }}>
+                    <img 
+                      src={founderImage} 
+                      alt="Founder" 
+                      style={{ 
+                        width: "100%", 
+                        height: "100%", 
+                        objectFit: "cover",
+                        display: "block"
+                      }} 
+                    />
+                  </div>
                   <div className="text-left">
-                    <p className="font-body font-semibold" style={{ fontSize: "0.85rem", color: T.fg }}>Founder, Aurion</p>
-                    <p className="font-body" style={{ fontSize: "0.76rem", color: T.muted, marginTop: "2px" }}>AI Adoption &amp; Enablement Consultant</p>
+                    <p className="font-body font-semibold" style={{ fontSize: "0.95rem", color: T.fg }}>Founder, Aurion</p>
+                    <p className="font-body" style={{ fontSize: "0.8rem", color: T.muted, marginTop: "2px" }}>AI Adoption &amp; Enablement Consultant</p>
                   </div>
                 </div>
               </blockquote>

@@ -151,7 +151,6 @@
 // };
 
 // export default Overview;
-
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -159,6 +158,9 @@ import Footer from "@/components/Footer";
 import { T, usePageMount, useScrollReveal, PageHero, ShimmerBtn, SLabel } from "./shared";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Import the image directly
+import teamPhoto from "@/assets/how-we-work-team.webp";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -497,9 +499,9 @@ const Overview = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center mb-16">
               <IntroBlock />
 
-              {/* Image with venetian reveal */}
+              {/* Image with venetian reveal - using imported image */}
               <VenetianImage
-                src="/src/assets/how-we-work-team.webp"
+                src={teamPhoto}
                 alt="Team in a structured discussion around a boardroom table"
                 delay={0.55}
               />

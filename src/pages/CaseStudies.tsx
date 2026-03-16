@@ -6,6 +6,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { studies } from "@/data/caseStudies";
 
+// Import the image directly
+import caseStudiesTeam from "@/assets/case-studies-team.webp";
+
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── Tokens ───────────────────────────────────────────────────────────────────
@@ -384,9 +387,9 @@ function Hero() {
             </p>
           </div>
 
-          {/* ── Right: diamond image ── */}
+          {/* ── Right: diamond image with imported image ── */}
           <DiamondImage
-            src="/src/assets/case-studies-team.webp"
+            src={caseStudiesTeam}
             delay={0.65}
           />
 

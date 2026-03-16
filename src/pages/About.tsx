@@ -655,13 +655,15 @@
 
 // export default About;
 
-
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Import the image directly
+import aboutTeam from "@/assets/about-team.webp";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -1193,9 +1195,9 @@ const HeroSection = () => {
             <div ref={lineRef} style={{ height: "2px", width: "56px", background: T.gold }} />
           </div>
 
-          {/* ── Right: Iris image ── */}
+          {/* ── Right: Iris image with imported image ── */}
           <IrisImage
-            src="/src/assets/about-team.webp"
+            src={aboutTeam}
             delay={0.75}
           />
 
