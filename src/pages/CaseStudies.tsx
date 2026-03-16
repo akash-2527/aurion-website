@@ -386,7 +386,7 @@ function Hero() {
 
           {/* ── Right: diamond image ── */}
           <DiamondImage
-            src="/src/assets/case-studies-team.jpg"
+            src="/src/assets/case-studies-team.webp"
             delay={0.65}
           />
 

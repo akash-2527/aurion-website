@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import heroBg from "@/assets/hero-bg.jpg";
-import teamPhoto from "@/assets/hero-team.jpg"; // <-- add your image here as hero-team.jpg
+import teamPhoto from "@/assets/hero-team.webp"; // <-- add your image here as hero-team.jpg
 import HoverAnimator from "@/motion/HoverAnimator";
 
 gsap.registerPlugin(ScrollTrigger);

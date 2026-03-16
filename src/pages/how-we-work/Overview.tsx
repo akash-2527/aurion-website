@@ -499,7 +499,7 @@ const Overview = () => {
 
               {/* Image with venetian reveal */}
               <VenetianImage
-                src="/src/assets/how-we-work-team.jpg"
+                src="/src/assets/how-we-work-team.webp"
                 alt="Team in a structured discussion around a boardroom table"
                 delay={0.55}
               />

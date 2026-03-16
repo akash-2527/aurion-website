@@ -1195,7 +1195,7 @@ const HeroSection = () => {
 
           {/* ── Right: Iris image ── */}
           <IrisImage
-            src="/src/assets/about-team.jpg"
+            src="/src/assets/about-team.webp"
             delay={0.75}
           />
 
