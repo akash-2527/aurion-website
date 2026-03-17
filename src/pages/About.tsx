@@ -1,660 +1,3 @@
-// import { useEffect, useRef } from "react";
-// import { Link } from "react-router-dom";
-// import Navbar from "@/components/Navbar";
-// import Footer from "@/components/Footer";
-// import SectionReveal from "@/motion/SectionReveal";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-// gsap.registerPlugin(ScrollTrigger);
-
-// // ─── Principles data ──────────────────────────────────────────────────────────
-
-// const principles = [
-//   {
-//     label: "Human-Centred Adoption",
-//     body: "We believe AI adoption is fundamentally about people  their confidence, their workflows, and their willingness to change. Technology is secondary.",
-//   },
-//   {
-//     label: "Calm Leadership",
-//     body: "In a world full of AI hype, we bring measured, thoughtful guidance. No panic, no pressure  just clarity.",
-//   },
-//   {
-//     label: "Practical Over Theoretical",
-//     body: "We focus on enablement that sticks  playbooks, workflows, and support structures that teams actually use.",
-//   },
-// ];
-
-// const focusPoints = [
-//   "practical workflows rather than abstract strategies",
-//   "learning that fits into real work, not separate training events",
-//   "internal ownership instead of long-term external dependency",
-// ];
-
-// const listeningPoints = [
-//   "how teams actually work, not how processes look on paper",
-//   "where effort is being duplicated or wasted",
-//   "where uncertainty or fear is blocking progress",
-// ];
-
-// // ─── Animated pull-quote ──────────────────────────────────────────────────────
-
-// const PullQuote = ({
-//   text,
-//   delay = 0,
-// }: {
-//   text: string;
-//   delay?: number;
-// }) => {
-//   const ref = useRef<HTMLDivElement>(null);
-
-//   useEffect(() => {
-//     if (!ref.current) return;
-//     gsap.fromTo(
-//       ref.current,
-//       { opacity: 0, x: -40 },
-//       {
-//         opacity: 1,
-//         x: 0,
-//         duration: 0.9,
-//         delay,
-//         ease: "power3.out",
-//         scrollTrigger: {
-//           trigger: ref.current,
-//           start: "top 85%",
-//           toggleActions: "play none none none",
-//         },
-//       }
-//     );
-//   }, [delay]);
-
-//   return (
-//     <div
-//       ref={ref}
-//       className="my-8 pl-6 py-1"
-//       style={{
-//         opacity: 0,
-//         borderLeft: "4px solid hsl(38,45%,55%)",
-//       }}
-//     >
-//       <p
-//         className="font-heading text-xl md:text-2xl font-medium leading-relaxed"
-//         style={{ color: "hsl(15,20%,18%)" }}
-//       >
-//         {text}
-//       </p>
-//     </div>
-//   );
-// };
-
-// // ─── Principle card ───────────────────────────────────────────────────────────
-
-// const PrincipleCard = ({
-//   principle,
-//   index,
-// }: {
-//   principle: (typeof principles)[0];
-//   index: number;
-// }) => {
-//   const ref = useRef<HTMLDivElement>(null);
-
-//   useEffect(() => {
-//     if (!ref.current) return;
-//     gsap.fromTo(
-//       ref.current,
-//       { opacity: 0, y: 36, scale: 0.97 },
-//       {
-//         opacity: 1,
-//         y: 0,
-//         scale: 1,
-//         duration: 0.75,
-//         delay: index * 0.12,
-//         ease: "power3.out",
-//         scrollTrigger: {
-//           trigger: ref.current,
-//           start: "top 88%",
-//           toggleActions: "play none none none",
-//         },
-//       }
-//     );
-//   }, [index]);
-
-//   return (
-//     <div
-//       ref={ref}
-//       className="p-6 md:p-8 rounded-sm"
-//       style={{
-//         opacity: 0,
-//         background: "hsl(35,25%,94%)",
-//         border: "1px solid hsl(30,15%,87%)",
-//       }}
-//     >
-//       <span className="aurion-label block mb-3">{principle.label}</span>
-//       <p className="font-body text-base leading-relaxed text-muted-foreground">
-//         {principle.body}
-//       </p>
-//     </div>
-//   );
-// };
-
-// // ─── Animated word reveal for hero ───────────────────────────────────────────
-
-// const HeroSection = () => {
-//   const ref = useRef<HTMLDivElement>(null);
-
-//   useEffect(() => {
-//     if (!ref.current) return;
-//     const items = ref.current.querySelectorAll(".hero-line");
-//     gsap.fromTo(
-//       items,
-//       { opacity: 0, y: 60, skewY: 2 },
-//       {
-//         opacity: 1,
-//         y: 0,
-//         skewY: 0,
-//         stagger: 0.14,
-//         duration: 1.0,
-//         ease: "power4.out",
-//         delay: 0.3,
-//       }
-//     );
-//   }, []);
-
-//   return (
-//     <section className="aurion-section pb-16">
-//       <div className="aurion-container">
-//         <div ref={ref} className="overflow-hidden">
-//           <span
-//             className="hero-line aurion-label mb-5 block"
-//             style={{ opacity: 0 }}
-//           >
-//             About Aurion
-//           </span>
-//           <div className="overflow-hidden mb-2">
-//             <h1
-//               className="hero-line aurion-heading-xl max-w-4xl"
-//               style={{ opacity: 0 }}
-//             >
-//               Someone who understands
-//             </h1>
-//           </div>
-//           <div className="overflow-hidden mb-8">
-//             <h1
-//               className="hero-line aurion-heading-xl max-w-4xl"
-//               style={{ opacity: 0 }}
-//             >
-//               how organisations actually work.
-//             </h1>
-//           </div>
-//           <div
-//             className="hero-line aurion-divider mb-10"
-//             style={{ opacity: 0 }}
-//           />
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };
-
-// // ─── Scrolling marquee text ───────────────────────────────────────────────────
-
-// const MarqueeStrip = () => {
-//   const trackRef = useRef<HTMLDivElement>(null);
-
-//   useEffect(() => {
-//     if (!trackRef.current) return;
-//     gsap.to(trackRef.current, {
-//       x: "-50%",
-//       duration: 28,
-//       ease: "none",
-//       repeat: -1,
-//     });
-//   }, []);
-
-//   const words = [
-//     "People-First AI",
-//     "·",
-//     "Calm Adoption",
-//     "·",
-//     "Practical Workflows",
-//     "·",
-//     "Human Judgement",
-//     "·",
-//     "Responsible Use",
-//     "·",
-//     "Organisational Clarity",
-//     "·",
-//   ];
-
-//   return (
-//     <div
-//       className="overflow-hidden py-4 border-y"
-//       style={{ borderColor: "hsl(30,15%,85%)" }}
-//     >
-//       <div ref={trackRef} className="flex whitespace-nowrap" style={{ width: "200%" }}>
-//         {[...words, ...words].map((w, i) => (
-//           <span
-//             key={i}
-//             className="font-heading text-sm font-medium px-6"
-//             style={{
-//               color:
-//                 w === "·" ? "hsl(38,45%,55%)" : "hsl(15,10%,52%)",
-//             }}
-//           >
-//             {w}
-//           </span>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-// // ─── Horizontal scroll timeline ───────────────────────────────────────────────
-
-// const TimelineSection = () => {
-//   const sectionRef = useRef<HTMLDivElement>(null);
-//   const trackRef = useRef<HTMLDivElement>(null);
-
-//   const steps = [
-//     {
-//       num: "01",
-//       label: "Listen",
-//       body: "Understand how teams actually work, not how processes look on paper.",
-//     },
-//     {
-//       num: "02",
-//       label: "Diagnose",
-//       body: "Surface where effort is duplicated, where fear blocks progress, where AI could genuinely help.",
-//     },
-//     {
-//       num: "03",
-//       label: "Design",
-//       body: "Embed AI carefully into existing workflows  documented clearly, aligned with how decisions already get made.",
-//     },
-//     {
-//       num: "04",
-//       label: "Enable",
-//       body: "Build internal confidence, shared language, and repeatable practice  not dependency.",
-//     },
-//     {
-//       num: "05",
-//       label: "Hand Over",
-//       body: "Leave the organisation stronger, clearer, and more self-sufficient than before.",
-//     },
-//   ];
-
-//   useEffect(() => {
-//     if (!sectionRef.current || !trackRef.current) return;
-
-//     const totalWidth =
-//       trackRef.current.scrollWidth - sectionRef.current.clientWidth;
-
-//     const ctx = gsap.context(() => {
-//       gsap.to(trackRef.current, {
-//         x: -totalWidth,
-//         ease: "none",
-//         scrollTrigger: {
-//           trigger: sectionRef.current,
-//           start: "top top",
-//           end: () => `+=${totalWidth}`,
-//           pin: true,
-//           scrub: 1,
-//           anticipatePin: 1,
-//         },
-//       });
-//     }, sectionRef);
-
-//     return () => ctx.revert();
-//   }, []);
-
-//   return (
-//     <section ref={sectionRef} className="overflow-hidden">
-//       <div
-//         ref={trackRef}
-//         className="flex items-stretch"
-//         style={{ width: "fit-content" }}
-//       >
-//         {/* Label panel */}
-//         <div
-//           className="flex flex-col justify-center px-12 md:px-20 shrink-0"
-//           style={{
-//             width: "min(380px, 90vw)",
-//             minHeight: "100vh",
-//             background: "hsl(15,20%,12%)",
-//           }}
-//         >
-//           <span
-//             className="aurion-label mb-4 block"
-//             style={{ color: "hsl(38,45%,62%)" }}
-//           >
-//             How We Work
-//           </span>
-//           <h2
-//             className="font-heading text-3xl md:text-4xl font-semibold leading-tight"
-//             style={{ color: "hsl(35,25%,92%)" }}
-//           >
-//             Five steps to lasting AI adoption.
-//           </h2>
-//           <p
-//             className="font-body text-sm mt-4 leading-relaxed"
-//             style={{ color: "hsl(35,10%,58%)" }}
-//           >
-//             Scroll to explore →
-//           </p>
-//         </div>
-
-//         {/* Step cards */}
-//         {steps.map((step, i) => (
-//           <div
-//             key={i}
-//             className="flex flex-col justify-center px-12 md:px-16 shrink-0 border-l"
-//             style={{
-//               width: "min(340px, 85vw)",
-//               minHeight: "100vh",
-//               borderColor: "hsl(30,15%,85%)",
-//               background: i % 2 === 0 ? "hsl(35,30%,96%)" : "hsl(35,25%,93%)",
-//             }}
-//           >
-//             <span
-//               className="font-heading text-6xl font-bold leading-none mb-4 opacity-15"
-//               style={{ color: "hsl(0,55%,32%)" }}
-//             >
-//               {step.num}
-//             </span>
-//             <h3
-//               className="font-heading text-2xl font-semibold mb-3"
-//               style={{ color: "hsl(15,20%,15%)" }}
-//             >
-//               {step.label}
-//             </h3>
-//             <p className="font-body text-base leading-relaxed text-muted-foreground">
-//               {step.body}
-//             </p>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// };
-
-// // ─── Page ─────────────────────────────────────────────────────────────────────
-
-// const About = () => {
-//   // Parallax on the background of a section
-//   const originRef = useRef<HTMLDivElement>(null);
-
-//   useEffect(() => {
-//     if (!originRef.current) return;
-//     gsap.fromTo(
-//       originRef.current.querySelector(".parallax-text"),
-//       { y: 0 },
-//       {
-//         y: -60,
-//         ease: "none",
-//         scrollTrigger: {
-//           trigger: originRef.current,
-//           start: "top bottom",
-//           end: "bottom top",
-//           scrub: true,
-//         },
-//       }
-//     );
-//   }, []);
-
-//   return (
-//     <>
-//       <Navbar />
-//       <main>
-//         {/* ── Hero ── */}
-//         <HeroSection />
-
-//         {/* ── Marquee ── */}
-//         <MarqueeStrip />
-
-//         {/* ── Origin story ── */}
-//         <section ref={originRef} className="aurion-section">
-//           <div className="aurion-container">
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
-//               {/* Left: main narrative */}
-//               <div className="parallax-text">
-//                 <SectionReveal>
-//                   <p className="aurion-body-lg mb-6">
-//                     Aurion was born out of a simple, uncomfortable observation.
-//                   </p>
-//                 </SectionReveal>
-
-//                 <PullQuote text="Most organisations are not struggling with AI because they lack tools. They are struggling because people do not know how AI fits into their real, everyday work." />
-
-//                 <SectionReveal delay={0.1}>
-//                   <p className="aurion-body mb-5">
-//                     By the time AI becomes visible at leadership level, it is
-//                     usually already being used quietly across teams. Sometimes
-//                     confidently. Often inconsistently. Almost always without
-//                     shared standards, clarity, or reassurance.
-//                   </p>
-//                   <p className="aurion-body mb-5">
-//                     Aurion exists to bring calm to that moment.
-//                   </p>
-//                   <p
-//                     className="aurion-body font-medium"
-//                     style={{ color: "hsl(15,20%,18%)" }}
-//                   >
-//                     Not by rushing adoption. Not by overwhelming teams with
-//                     technical complexity. But by helping organisations slow down
-//                     just enough to understand what is already happening  and then
-//                     shape it deliberately.
-//                   </p>
-//                 </SectionReveal>
-//               </div>
-
-//               {/* Right: principles */}
-//               <div className="space-y-4">
-//                 {principles.map((p, i) => (
-//                   <PrincipleCard key={i} principle={p} index={i} />
-//                 ))}
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* ── Horizontal scroll timeline ── */}
-//         <TimelineSection />
-
-//         {/* ── How the work happens ── */}
-//         <section className="aurion-section">
-//           <div className="aurion-container">
-//             <SectionReveal>
-//               <span className="aurion-label mb-4 block">The Work</span>
-//               <h2 className="aurion-heading-lg max-w-2xl mb-6">
-//                 The work Aurion does sits between people and systems.
-//               </h2>
-//               <div className="aurion-divider mb-12" />
-//             </SectionReveal>
-
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-//               <div>
-//                 <SectionReveal delay={0.1}>
-//                   <p className="aurion-body mb-5">
-//                     It starts by listening: how teams actually work, not how
-//                     processes look on paper. Where effort is being duplicated or
-//                     wasted. Where uncertainty or fear is blocking progress.
-//                   </p>
-//                   <p className="aurion-body mb-5">
-//                     Only then does AI enter the conversation.
-//                   </p>
-//                   <p className="aurion-body mb-5">
-//                     When it does, it is introduced carefully  embedded into
-//                     existing workflows, documented clearly, and aligned with how
-//                     the organisation already makes decisions.
-//                   </p>
-//                 </SectionReveal>
-
-//                 <PullQuote text="AI should make work feel lighter. Not louder." />
-
-//                 <SectionReveal delay={0.15}>
-//                   <p className="aurion-body mb-5">
-//                     Aurion does not treat AI adoption as a one-off transformation
-//                     project. Real adoption happens slowly, through habit, trust,
-//                     and repetition. It happens when people feel confident using AI
-//                     without second-guessing themselves or worrying about getting it
-//                     wrong.
-//                   </p>
-//                   <p className="aurion-body">
-//                     It happens when teams understand not just how to use tools,
-//                     but when and why.
-//                   </p>
-//                 </SectionReveal>
-//               </div>
-
-//               <div>
-//                 <SectionReveal delay={0.2}>
-//                   <h3 className="aurion-heading-md mb-6">
-//                     That is why Aurion focuses on:
-//                   </h3>
-//                   <ul className="space-y-4 mb-10">
-//                     {focusPoints.map((f, i) => (
-//                       <li key={i} className="flex items-start gap-4">
-//                         <span
-//                           className="mt-2 w-2 h-2 rounded-full flex-shrink-0"
-//                           style={{ background: "hsl(38,45%,55%)" }}
-//                         />
-//                         <span className="aurion-body">{f}</span>
-//                       </li>
-//                     ))}
-//                   </ul>
-//                 </SectionReveal>
-
-//                 {/* Dark callout box */}
-//                 <SectionReveal delay={0.25}>
-//                   <div
-//                     className="rounded-sm p-6 md:p-8"
-//                     style={{ background: "hsl(15,20%,12%)" }}
-//                   >
-//                     <p
-//                       className="font-heading text-lg font-medium mb-2"
-//                       style={{ color: "hsl(35,25%,92%)" }}
-//                     >
-//                       This is not technology-first consulting.
-//                     </p>
-//                     <p
-//                       className="font-body text-base leading-relaxed"
-//                       style={{ color: "hsl(35,10%,60%)" }}
-//                     >
-//                       It is people-first AI adoption.
-//                     </p>
-//                   </div>
-//                 </SectionReveal>
-//               </div>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* ── Who it's for ── */}
-//         <section
-//           className="aurion-section"
-//           style={{ background: "hsl(35,25%,93%)" }}
-//         >
-//           <div className="aurion-container">
-//             <SectionReveal>
-//               <span className="aurion-label mb-4 block">Who Aurion Works With</span>
-//               <h2 className="aurion-heading-lg max-w-2xl mb-6">
-//                 Already experimenting. Ready to bring coherence.
-//               </h2>
-//               <div className="aurion-divider mb-12" />
-//             </SectionReveal>
-
-//             <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-//               <SectionReveal delay={0.1}>
-//                 <p className="aurion-body mb-5">
-//                   Aurion works best with organisations that are already
-//                   experimenting  even informally  and want to bring coherence to
-//                   that experimentation without killing momentum.
-//                 </p>
-//                 <p className="aurion-body mb-5">
-//                   Teams that value clarity, responsibility, and human judgement as
-//                   much as efficiency.
-//                 </p>
-//                 <p className="aurion-body">
-//                   This work is especially relevant where trust, compliance, and
-//                   culture matter. Where decisions are complex. Where people, not
-//                   just systems, carry the risk.
-//                 </p>
-//               </SectionReveal>
-
-//               <SectionReveal delay={0.2}>
-//                 <div
-//                   className="p-6 md:p-8 rounded-sm h-full"
-//                   style={{
-//                     background: "hsl(35,30%,96%)",
-//                     border: "1px solid hsl(30,15%,86%)",
-//                   }}
-//                 >
-//                   <span className="aurion-label mb-4 block">
-//                     The Practitioner Behind Aurion
-//                   </span>
-//                   <p className="aurion-body mb-4">
-//                     Aurion is led by a practitioner with a background in
-//                     psychology, learning, and organisational change.
-//                   </p>
-//                   <p className="aurion-body mb-4">
-//                     This perspective comes from working within both complex
-//                     institutions and fast-moving teams, where real decisions happen
-//                     under real pressure.
-//                   </p>
-//                   <p className="aurion-body font-medium" style={{ color: "hsl(15,20%,18%)" }}>
-//                     The work is grounded in how organisations operate in practice,
-//                     not in idealised models.
-//                   </p>
-//                 </div>
-//               </SectionReveal>
-//             </div>
-//           </div>
-//         </section>
-
-//         {/* ── Closing statement ── */}
-//         <SectionReveal>
-//           <section
-//             className="py-24 md:py-36"
-//             style={{ background: "hsl(15,20%,12%)" }}
-//           >
-//             <div className="aurion-container max-w-3xl text-center mx-auto px-6">
-//               <span
-//                 className="aurion-label mb-6 block"
-//                 style={{ color: "hsl(38,45%,62%)" }}
-//               >
-//                 The Aim
-//               </span>
-//               <p
-//                 className="font-heading text-2xl md:text-3xl lg:text-4xl font-medium leading-snug mb-8"
-//                 style={{ color: "hsl(35,25%,92%)" }}
-//               >
-//                 AI will continue to evolve. What matters is how calmly
-//                 organisations adapt to it.
-//               </p>
-//               <p
-//                 className="font-body text-base md:text-lg leading-relaxed mb-10"
-//                 style={{ color: "hsl(35,10%,58%)" }}
-//               >
-//                 Aurion exists to make that adaptation possible.
-//               </p>
-//               <Link
-//                 to="/contact"
-//                 className="aurion-btn-primary"
-//                 style={{ borderRadius: "2px" }}
-//               >
-//                 Start a conversation →
-//               </Link>
-//             </div>
-//           </section>
-//         </SectionReveal>
-//       </main>
-//       <Footer />
-//     </>
-//   );
-// };
-
-// export default About;
-
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
@@ -662,8 +5,8 @@ import Footer from "@/components/Footer";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Import the image directly
-import aboutTeam from "@/assets/about-team.webp";
+import aboutTeam    from "@/assets/about-team.webp";
+import founderPhoto from "@/assets/dp.webp";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -686,6 +29,132 @@ const T = {
   dkGold:   "hsl(38, 45%, 62%)",
 };
 
+// ─── Global responsive CSS ────────────────────────────────────────────────────
+const css = `
+  /* ── Hero ── */
+  .ab-hero-grid {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: clamp(2.5rem, 5vw, 4rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .ab-hero-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  /* ── Founder story ── */
+  .ab-story-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .ab-story-grid { grid-template-columns: 1fr; gap: 2rem; }
+  }
+
+  /* ── Values 3-col ── */
+  .ab-values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.85rem, 1.5vw, 1.25rem);
+  }
+  @media (max-width: 900px) {
+    .ab-values-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 560px) {
+    .ab-values-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Contract 3-col ── */
+  .ab-contract-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(0.85rem, 1.5vw, 1.25rem);
+  }
+  @media (max-width: 860px) {
+    .ab-contract-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── Who 2-col ── */
+  .ab-who-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .ab-who-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  }
+
+  /* ── Founder section 2-col ── */
+  .ab-founder-grid {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    gap: clamp(2.5rem, 6vw, 5.5rem);
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .ab-founder-grid {
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+  }
+
+  /* ── Section padding ── */
+  .ab-pad { padding: clamp(64px, 9vw, 96px) 0; }
+  .ab-pad-sm { padding: clamp(48px, 7vw, 72px) 0; }
+
+  /* ── IrisImage panel ── */
+  .ab-iris-panel { height: clamp(320px, 40vw, 520px); }
+
+  /* ── Founder photo panel ── */
+  .ab-founder-photo { height: clamp(380px, 52vw, 580px); }
+
+  /* ── Approach row ── */
+  .ab-approach-row {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 2rem;
+    align-items: start;
+    padding: 2.5rem 0;
+  }
+  @media (max-width: 480px) {
+    .ab-approach-row {
+      grid-template-columns: 48px 1fr;
+      gap: 1rem;
+    }
+  }
+
+  /* ── Who callout inline ── */
+  .ab-callout-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── Credential chips wrap ── */
+  .ab-creds {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  /* ── Founder badge position ── */
+  .ab-founder-badge {
+    position: absolute;
+    bottom: 1.75rem;
+    right: -0.75rem;
+  }
+  @media (max-width: 900px) {
+    .ab-founder-badge { right: 0.75rem; }
+  }
+`;
+
 // ─── usePageMount ─────────────────────────────────────────────────────────────
 function usePageMount() {
   useEffect(() => {
@@ -696,7 +165,11 @@ function usePageMount() {
       r2 = requestAnimationFrame(() => ScrollTrigger.refresh());
     });
     const t = setTimeout(() => ScrollTrigger.refresh(), 350);
-    return () => { cancelAnimationFrame(r1); cancelAnimationFrame(r2); clearTimeout(t); };
+    return () => {
+      cancelAnimationFrame(r1);
+      cancelAnimationFrame(r2);
+      clearTimeout(t);
+    };
   }, []);
 }
 
@@ -734,7 +207,10 @@ function useLineDraw(ref: React.RefObject<HTMLElement | null>, delay = 0) {
     const ctx = gsap.context(() => {
       gsap.to(el, {
         scaleX: 1, duration: 1.0, ease: "power2.inOut", delay,
-        scrollTrigger: { trigger: el, start: () => "top 91%", once: true, invalidateOnRefresh: true },
+        scrollTrigger: {
+          trigger: el, start: () => "top 91%",
+          once: true, invalidateOnRefresh: true,
+        },
       });
     }, el);
     return () => ctx.revert();
@@ -756,7 +232,10 @@ function use3DTilt(
     const card = cardRef.current;
     const glow = glowRef.current;
     if (!card || !glow) return;
-    const { accentMid = "hsla(0,55%,32%,0.07)", borderHover = "hsla(0,55%,32%,0.25)" } = opts ?? {};
+    const {
+      accentMid   = "hsla(0,55%,32%,0.07)",
+      borderHover = "hsla(0,55%,32%,0.25)",
+    } = opts ?? {};
     let tRX = 0, tRY = 0, cRX = 0, cRY = 0;
     let tGX = 50, tGY = 50, cGX = 50, cGY = 50;
 
@@ -783,9 +262,16 @@ function use3DTilt(
     const leave = () => {
       debRef.current = setTimeout(() => {
         hovRef.current = false; tRX = 0; tRY = 0; tGX = 50; tGY = 50;
-        gsap.to(card, { rotateX: 0, rotateY: 0, y: 0, boxShadow: "0 2px 10px -2px rgba(0,0,0,0.06)", duration: 0.6, ease: "power2.out", overwrite: true });
+        gsap.to(card, {
+          rotateX: 0, rotateY: 0, y: 0,
+          boxShadow: "0 2px 10px -2px rgba(0,0,0,0.06)",
+          duration: 0.6, ease: "power2.out", overwrite: true,
+        });
         card.style.borderColor = T.border;
-        gsap.to(glow, { opacity: 0, duration: 0.35, overwrite: true, onComplete: () => { glow.style.opacity = "1"; glow.style.background = "none"; } });
+        gsap.to(glow, {
+          opacity: 0, duration: 0.35, overwrite: true,
+          onComplete: () => { glow.style.opacity = "1"; glow.style.background = "none"; },
+        });
       }, 40);
     };
     const move = (e: MouseEvent) => {
@@ -810,9 +296,17 @@ function use3DTilt(
 }
 
 // ─── SLabel ───────────────────────────────────────────────────────────────────
-const SLabel = ({ children, light = false }: { children: React.ReactNode; light?: boolean }) => (
-  <span className="font-body font-semibold uppercase block mb-4"
-    style={{ fontSize: "11px", letterSpacing: "0.22em", color: light ? T.dkGold : T.primary }}>
+const SLabel = ({
+  children,
+  light = false,
+}: {
+  children: React.ReactNode;
+  light?: boolean;
+}) => (
+  <span
+    className="font-body font-semibold uppercase block mb-4"
+    style={{ fontSize: "11px", letterSpacing: "0.22em", color: light ? T.dkGold : T.primary }}
+  >
     {children}
   </span>
 );
@@ -831,25 +325,25 @@ const ReadingBar = () => {
     return () => window.removeEventListener("scroll", update);
   }, []);
   return (
-    <div style={{ position: "fixed", top: 0, left: 0, right: 0, height: "2px", zIndex: 999, pointerEvents: "none", background: T.border }}>
-      <div ref={barRef} style={{ height: "100%", background: T.primary, transform: "scaleX(0)", transformOrigin: "left center", willChange: "transform" }} />
+    <div style={{
+      position: "fixed", top: 0, left: 0, right: 0,
+      height: "2px", zIndex: 999, pointerEvents: "none",
+      background: T.border,
+    }}>
+      <div
+        ref={barRef}
+        style={{
+          height: "100%", background: T.primary,
+          transform: "scaleX(0)", transformOrigin: "left center",
+          willChange: "transform",
+        }}
+      />
     </div>
   );
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// IRIS IMAGE — completely new animation concept
-//
-// Technique: "Iris open + traced border"
-// The image starts as a dot (scale 0, borderRadius 50%) and expands to fill
-// its container while the border-radius eases from 50% → 12px (circle → rect).
-// This mimics a camera iris / aperture opening — unexpected, organic, premium.
-//
-// Simultaneously:
-// - A primary-coloured SVG border "draws" itself around the frame (strokeDashoffset)
-// - The image scales from 1.12 → 1.0 (breathes in)
-// - After reveal: scroll parallax drifts image upward
-// - After reveal: mouse tilt on the panel gives 3D depth
+// IRIS IMAGE — hero animation (unchanged)
 // ═══════════════════════════════════════════════════════════════════════════════
 function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
   const panelRef  = useRef<HTMLDivElement>(null);
@@ -858,7 +352,6 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
   const svgRef    = useRef<SVGRectElement>(null);
   const badgeRef  = useRef<HTMLDivElement>(null);
 
-  // ── Iris open ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const wrap  = wrapRef.current;
     const img   = imgRef.current;
@@ -866,60 +359,25 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
     const badge = badgeRef.current;
     if (!wrap || !img || !rect) return;
 
-    const perimeter = 2 * (440 + 520); // SVG rect perimeter px
-
-    // Initial state: dot
-    gsap.set(wrap, {
-      scale: 0,
-      borderRadius: "50%",
-      force3D: true,
-      immediateRender: true,
-    });
-    gsap.set(img, { scale: 1.15, force3D: true, immediateRender: true });
-    // SVG border starts invisible
-    gsap.set(rect, { strokeDasharray: perimeter, strokeDashoffset: perimeter });
+    const perimeter = 2 * (440 + 520);
+    gsap.set(wrap,  { scale: 0, borderRadius: "50%", force3D: true, immediateRender: true });
+    gsap.set(img,   { scale: 1.15, force3D: true, immediateRender: true });
+    gsap.set(rect,  { strokeDasharray: perimeter, strokeDashoffset: perimeter });
     if (badge) gsap.set(badge, { opacity: 0, scale: 0.88, y: 12, force3D: true, immediateRender: true });
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay });
-
-      // 1. Iris opens: scale 0→1 + borderRadius 50%→12px
-      tl.to(wrap, {
-        scale: 1,
-        borderRadius: "12px",
-        duration: 0.95,
-        ease: "expo.out",
-        force3D: true,
-      });
-
-      // 2. Simultaneously: image breathes in
-      tl.to(img, {
-        scale: 1,
-        duration: 1.1,
-        ease: "power2.out",
-        force3D: true,
-      }, "<+0.05");
-
-      // 3. Border traces itself after iris opens
-      tl.to(rect, {
-        strokeDashoffset: 0,
-        duration: 1.2,
-        ease: "power2.inOut",
-      }, "<+0.4");
-
-      // 4. Badge pops in
+      tl.to(wrap,  { scale: 1, borderRadius: "12px", duration: 0.95, ease: "expo.out", force3D: true });
+      tl.to(img,   { scale: 1, duration: 1.1, ease: "power2.out", force3D: true }, "<+0.05");
+      tl.to(rect,  { strokeDashoffset: 0, duration: 1.2, ease: "power2.inOut" }, "<+0.4");
       if (badge) {
-        tl.to(badge, {
-          opacity: 1, scale: 1, y: 0,
-          duration: 0.55, ease: "back.out(1.5)", force3D: true,
-        }, ">-0.2");
+        tl.to(badge, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "back.out(1.5)", force3D: true }, ">-0.2");
       }
     }, wrap);
 
     return () => ctx.revert();
   }, [delay]);
 
-  // ── Scroll parallax ────────────────────────────────────────────────────────
   useEffect(() => {
     const img   = imgRef.current;
     const panel = panelRef.current;
@@ -936,20 +394,17 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
     return () => ctx.revert();
   }, []);
 
-  // ── Mouse tilt on panel ────────────────────────────────────────────────────
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) return;
     let rafId: number;
     let tRX = 0, tRY = 0, cRX = 0, cRY = 0;
-    let hov = false;
     const tick = () => {
       cRX += (tRX - cRX) * 0.07; cRY += (tRY - cRY) * 0.07;
       panel.style.transform = `perspective(1200px) rotateX(${cRX}deg) rotateY(${cRY}deg)`;
       rafId = requestAnimationFrame(tick);
     };
     const enter = (e: MouseEvent) => {
-      hov = true;
       const r = panel.getBoundingClientRect();
       tRX = -(((e.clientY - r.top) / r.height) - 0.5) * 7;
       tRY =  (((e.clientX - r.left) / r.width) - 0.5) * 9;
@@ -960,7 +415,7 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
       tRY =  (((e.clientX - r.left) / r.width) - 0.5) * 9;
     };
     const leave = () => {
-      hov = false; tRX = 0; tRY = 0;
+      tRX = 0; tRY = 0;
       gsap.to(panel, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power2.out", overwrite: true });
     };
     rafId = requestAnimationFrame(tick);
@@ -976,52 +431,32 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
   }, []);
 
   return (
-    <div
-      ref={panelRef}
-      style={{
-        position: "relative",
-        willChange: "transform",
-        // height matches hero section rhythm
-        height: "520px",
-      }}
-    >
-      {/* SVG traced border — sits outside the image wrapper */}
+    <div ref={panelRef} style={{ position: "relative", willChange: "transform" }}>
       <svg
         aria-hidden="true"
         style={{
-          position: "absolute",
-          top: "-6px", left: "-6px",
-          width: "calc(100% + 12px)",
-          height: "calc(100% + 12px)",
-          pointerEvents: "none",
-          zIndex: 3,
-          overflow: "visible",
+          position: "absolute", top: "-6px", left: "-6px",
+          width: "calc(100% + 12px)", height: "calc(100% + 12px)",
+          pointerEvents: "none", zIndex: 3, overflow: "visible",
         }}
         viewBox="0 0 452 532"
         preserveAspectRatio="none"
       >
         <rect
           ref={svgRef}
-          x="3" y="3"
-          width="446" height="526"
-          rx="14"
-          fill="none"
-          stroke={T.primary}
-          strokeWidth="1.5"
-          strokeDasharray="1920"
-          strokeDashoffset="1920"
-          opacity="0.5"
+          x="3" y="3" width="446" height="526" rx="14"
+          fill="none" stroke={T.primary} strokeWidth="1.5"
+          strokeDasharray="1920" strokeDashoffset="1920" opacity="0.5"
         />
       </svg>
 
-      {/* Image wrapper — this is what irises open */}
       <div
         ref={wrapRef}
+        className="ab-iris-panel"
         style={{
           width: "100%",
-          height: "100%",
           overflow: "hidden",
-          borderRadius: "50%", // starts as circle, GSAP will open it
+          borderRadius: "50%",
           position: "relative",
           willChange: "transform, border-radius",
           transformOrigin: "center center",
@@ -1030,27 +465,19 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
         <img
           ref={imgRef}
           src={src}
-          alt="Team collaborating at a whiteboard"
+          alt="Team collaborating"
           style={{
-            width: "100%",
-            height: "115%", // extra for parallax travel
-            objectFit: "cover",
-            objectPosition: "center 15%",
-            display: "block",
-            transformOrigin: "center center",
+            width: "100%", height: "115%",
+            objectFit: "cover", objectPosition: "center 15%",
+            display: "block", transformOrigin: "center center",
             willChange: "transform",
           }}
         />
-
-        {/* Warm colour grade overlay */}
         <div aria-hidden="true" style={{
           position: "absolute", inset: 0,
           background: `linear-gradient(150deg, hsla(0,55%,32%,0.09) 0%, hsla(38,45%,55%,0.05) 45%, transparent 70%)`,
-          mixBlendMode: "multiply",
-          pointerEvents: "none",
+          mixBlendMode: "multiply", pointerEvents: "none",
         }} />
-
-        {/* Bottom fade */}
         <div aria-hidden="true" style={{
           position: "absolute", bottom: 0, left: 0, right: 0, height: "40%",
           background: `linear-gradient(to top, ${T.bg} 0%, transparent 100%)`,
@@ -1058,32 +485,18 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
         }} />
       </div>
 
-      {/* Floating badge — bottom left, pops in after iris */}
-      <div
-        ref={badgeRef}
-        style={{
-          position: "absolute",
-          bottom: "2rem",
-          left: "-1.5rem",
-          opacity: 0,
-          zIndex: 10,
-        }}
-      >
+      <div ref={badgeRef} style={{
+        position: "absolute", bottom: "2rem", left: "-1.5rem",
+        opacity: 0, zIndex: 10,
+      }}>
         <div style={{
-          background: T.bgCard,
-          border: `1px solid ${T.border}`,
-          borderRadius: "4px",
-          padding: "1rem 1.4rem",
-          boxShadow: "0 10px 32px -6px rgba(0,0,0,0.15)",
-          minWidth: "196px",
+          background: T.bgCard, border: `1px solid ${T.border}`,
+          borderRadius: "4px", padding: "1rem 1.4rem",
+          boxShadow: "0 10px 32px -6px rgba(0,0,0,0.15)", minWidth: "196px",
         }}>
           <div style={{ height: "2px", width: "28px", background: T.primary, borderRadius: "1px", marginBottom: "0.7rem" }} />
-          <p className="font-heading font-semibold" style={{ fontSize: "0.98rem", color: T.fg, lineHeight: 1.2, marginBottom: "0.2rem" }}>
-            Human first
-          </p>
-          <p className="font-body" style={{ fontSize: "0.74rem", color: T.fgMuted, letterSpacing: "0.05em" }}>
-            Behavioural approach to AI adoption
-          </p>
+          <p className="font-heading font-semibold" style={{ fontSize: "0.98rem", color: T.fg, lineHeight: 1.2, marginBottom: "0.2rem" }}>Human first</p>
+          <p className="font-body" style={{ fontSize: "0.74rem", color: T.fgMuted, letterSpacing: "0.05em" }}>Behavioural approach to AI adoption</p>
         </div>
       </div>
     </div>
@@ -1091,7 +504,7 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 1. HERO — split screen: copy left, iris image right
+// 1. HERO
 // ═══════════════════════════════════════════════════════════════════════════════
 const HeroSection = () => {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -1118,7 +531,8 @@ const HeroSection = () => {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.15 });
-      tl.from(wrap.querySelector(".hero-label"), { opacity: 0, y: 12, duration: 0.5, ease: "power2.out" })
+      tl.from(wrap.querySelector(".hero-label"),
+        { opacity: 0, y: 12, duration: 0.5, ease: "power2.out" })
         .to(words, { opacity: 1, y: 0, stagger: 0.04, duration: 0.65, ease: "power3.out", force3D: true }, "-=0.2")
         .to(sub,   { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", force3D: true }, "-=0.2")
         .to(cta,   { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", force3D: true }, "-=0.35");
@@ -1131,16 +545,14 @@ const HeroSection = () => {
   return (
     <section style={{
       background: T.bg,
-      padding: "104px 0 84px",
+      padding: "clamp(72px, 10vw, 104px) 0 clamp(48px, 7vw, 84px)",
       position: "relative", overflow: "hidden",
     }}>
-      {/* Warm radial — top right */}
       <div aria-hidden="true" style={{
         position: "absolute", top: 0, right: 0, bottom: 0, width: "52vw",
         background: `radial-gradient(ellipse at top right, hsla(0,55%,32%,0.055) 0%, transparent 60%)`,
         pointerEvents: "none",
       }} />
-      {/* Dot grid */}
       <div aria-hidden="true" style={{
         position: "absolute", inset: 0, pointerEvents: "none",
         backgroundImage: `radial-gradient(${T.border} 1px, transparent 1px)`,
@@ -1148,38 +560,25 @@ const HeroSection = () => {
       }} />
 
       <div className="aurion-container" style={{ position: "relative", zIndex: 1 }}>
-        {/* Split: copy left (7 cols) | image right (5 cols) */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "7fr 5fr",
-          gap: "4rem",
-          alignItems: "center",
-        }}>
-
-          {/* ── Left: copy ── */}
+        <div className="ab-hero-grid">
           <div ref={wrapRef}>
             <span className="hero-label font-body font-semibold uppercase block mb-5"
               style={{ fontSize: "11px", letterSpacing: "0.22em", color: T.primary, opacity: 0 }}>
               About Aurion
             </span>
-
             <h1 className="hero-h1 aurion-heading-xl leading-tight" style={{ margin: "0 0 0.1em" }}>
               Aurion began with a simple question
             </h1>
             <h1 className="hero-h1 aurion-heading-xl leading-tight" style={{ margin: "0 0 1.8rem" }}>
               that kept showing up everywhere.
             </h1>
-
             <p ref={subRef} className="font-body" style={{
-              opacity: 0,
-              fontSize: "clamp(1rem, 1.45vw, 1.15rem)",
-              color: T.fgMuted, lineHeight: 1.78,
-              maxWidth: "460px", marginBottom: "2.5rem",
-              fontStyle: "italic",
+              opacity: 0, fontSize: "clamp(1rem, 1.45vw, 1.15rem)",
+              color: T.fgMuted, lineHeight: 1.78, maxWidth: "460px",
+              marginBottom: "2.5rem", fontStyle: "italic",
             }}>
               A human, behavioural approach to responsible AI adoption.
             </p>
-
             <div ref={ctaRef} style={{ opacity: 0, marginBottom: "2.5rem" }}>
               <Link to="/contact"
                 className="group inline-flex items-center gap-3 font-body font-medium"
@@ -1191,16 +590,10 @@ const HeroSection = () => {
                 Book a clarity call
               </Link>
             </div>
-
             <div ref={lineRef} style={{ height: "2px", width: "56px", background: T.gold }} />
           </div>
 
-          {/* ── Right: Iris image with imported image ── */}
-          <IrisImage
-            src={aboutTeam}
-            delay={0.75}
-          />
-
+          <IrisImage src={aboutTeam} delay={0.75} />
         </div>
       </div>
     </section>
@@ -1221,11 +614,17 @@ const MarqueeStrip = () => {
   }, []);
   const words = ["People-First AI","·","Calm Adoption","·","Practical Workflows","·","Human Judgement","·","Responsible Use","·","Behavioural Clarity","·"];
   return (
-    <div style={{ overflow: "hidden", padding: "12px 0", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`, background: T.bgWarm }}>
+    <div style={{
+      overflow: "hidden", padding: "12px 0",
+      borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`,
+      background: T.bgWarm,
+    }}>
       <div ref={trackRef} className="flex whitespace-nowrap" style={{ width: "200%" }}>
         {[...words, ...words].map((w, i) => (
           <span key={i} className="font-heading font-medium px-6"
-            style={{ fontSize: "0.78rem", letterSpacing: "0.08em", color: w === "·" ? T.gold : T.fgMuted }}>{w}</span>
+            style={{ fontSize: "0.78rem", letterSpacing: "0.08em", color: w === "·" ? T.gold : T.fgMuted }}>
+            {w}
+          </span>
         ))}
       </div>
     </div>
@@ -1263,7 +662,7 @@ const FounderStory = () => {
   }, []);
 
   return (
-    <section style={{ background: T.bg, padding: "88px 0" }}>
+    <section className="ab-pad" style={{ background: T.bg }}>
       <div className="aurion-container">
         <div ref={headerRef} style={{ opacity: 0, marginBottom: "1.75rem" }}>
           <SLabel>The Origin</SLabel>
@@ -1272,7 +671,7 @@ const FounderStory = () => {
           </h2>
         </div>
         <div ref={dividerRef} className="aurion-divider" style={{ marginBottom: "3rem" }} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-start">
+        <div className="ab-story-grid">
           <div ref={leftRef} style={{ opacity: 0 }}>
             <p className="font-body mb-5" style={{ fontSize: "1.05rem", color: T.fgMid, lineHeight: 1.82 }}>
               Teams wanted to know what good AI use looked like in their real work. Managers wanted to know how to guide their teams without feeling exposed. Leaders wanted to know what was actually happening on the ground. Everyone was experimenting quietly, but no one was talking about it openly.
@@ -1285,12 +684,20 @@ const FounderStory = () => {
             </p>
           </div>
           <div style={{ position: "relative", paddingLeft: "1.75rem" }}>
-            <div ref={quoteBarRef} style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: "3px", background: T.primary, borderRadius: "2px" }} />
+            <div ref={quoteBarRef} style={{
+              position: "absolute", left: 0, top: 0, bottom: 0,
+              width: "3px", background: T.primary, borderRadius: "2px",
+            }} />
             <div ref={quoteRef} style={{ opacity: 0 }}>
-              <p className="font-heading font-medium leading-relaxed" style={{ fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)", color: T.fg, lineHeight: 1.5, marginBottom: "1.1rem" }}>
+              <p className="font-heading font-medium leading-relaxed" style={{
+                fontSize: "clamp(1.1rem, 1.8vw, 1.4rem)", color: T.fg,
+                lineHeight: 1.5, marginBottom: "1.1rem",
+              }}>
                 "People were not asking for more AI tools. They were asking for clarity."
               </p>
-              <span className="font-body font-semibold uppercase block" style={{ fontSize: "10px", letterSpacing: "0.22em", color: T.fgMuted }}>
+              <span className="font-body font-semibold uppercase block" style={{
+                fontSize: "10px", letterSpacing: "0.22em", color: T.fgMuted,
+              }}>
                 Founding insight
               </span>
             </div>
@@ -1324,12 +731,26 @@ function ValueCard({ v, idx }: { v: typeof valuesData[0]; idx: number }) {
     return () => ctx.revert();
   }, [idx]);
   return (
-    <div ref={cardRef} style={{ opacity: 0, position: "relative", background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: "4px", padding: "2.25rem 2rem", boxShadow: "0 2px 10px -2px rgba(0,0,0,0.06)", willChange: "transform, box-shadow", transition: "box-shadow 0.25s ease, border-color 0.25s ease", overflow: "hidden" }}>
+    <div ref={cardRef} style={{
+      opacity: 0, position: "relative",
+      background: T.bgCard, border: `1px solid ${T.border}`,
+      borderRadius: "4px", padding: "clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 2.5vw, 2rem)",
+      boxShadow: "0 2px 10px -2px rgba(0,0,0,0.06)",
+      willChange: "transform, box-shadow",
+      transition: "box-shadow 0.25s ease, border-color 0.25s ease",
+      overflow: "hidden",
+    }}>
       <div ref={glowRef} style={{ position: "absolute", inset: 0, borderRadius: "4px", pointerEvents: "none", zIndex: 0 }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: v.accent, borderRadius: "4px 4px 0 0" }} />
       <div style={{ position: "relative", zIndex: 1 }}>
-        <span className="font-body font-semibold uppercase" style={{ display: "inline-block", fontSize: "9.5px", letterSpacing: "0.2em", color: v.accent, background: v.accentBg, border: `1px solid ${v.accentMid}`, borderRadius: "2px", padding: "0.22rem 0.7rem", marginBottom: "1.25rem" }}>{v.word}</span>
-        <h3 className="font-heading font-semibold leading-tight mb-4" style={{ fontSize: "clamp(1.25rem, 2vw, 1.65rem)", color: T.fg }}>{v.word}</h3>
+        <span className="font-body font-semibold uppercase" style={{
+          display: "inline-block", fontSize: "9.5px", letterSpacing: "0.2em",
+          color: v.accent, background: v.accentBg, border: `1px solid ${v.accentMid}`,
+          borderRadius: "2px", padding: "0.22rem 0.7rem", marginBottom: "1.25rem",
+        }}>{v.word}</span>
+        <h3 className="font-heading font-semibold leading-tight mb-4" style={{
+          fontSize: "clamp(1.15rem, 2vw, 1.5rem)", color: T.fg,
+        }}>{v.word}</h3>
         <div style={{ height: "1px", background: T.border, marginBottom: "0.9rem" }} />
         <p className="font-body" style={{ fontSize: "0.875rem", color: T.fgMuted, lineHeight: 1.82 }}>{v.body}</p>
       </div>
@@ -1341,13 +762,15 @@ const ValuesSection = () => {
   const headerRef = useRef<HTMLDivElement>(null);
   useReveal(headerRef as React.RefObject<HTMLElement>);
   return (
-    <section style={{ background: T.bgWarm, padding: "88px 0" }}>
+    <section className="ab-pad" style={{ background: T.bgWarm }}>
       <div className="aurion-container">
         <div ref={headerRef} style={{ opacity: 0, marginBottom: "2.75rem" }}>
           <SLabel>What Aurion Stands For</SLabel>
-          <h2 className="aurion-heading-lg leading-tight" style={{ maxWidth: "520px", margin: 0 }}>Aurion was created to bring ease into that moment.</h2>
+          <h2 className="aurion-heading-lg leading-tight" style={{ maxWidth: "520px", margin: 0 }}>
+            Aurion was created to bring ease into that moment.
+          </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="ab-values-grid">
           {valuesData.map((v, i) => <ValueCard key={v.word} v={v} idx={i} />)}
         </div>
       </div>
@@ -1359,9 +782,9 @@ const ValuesSection = () => {
 // 5. APPROACH
 // ═══════════════════════════════════════════════════════════════════════════════
 const approachData = [
-  { num: "01", label: "Understanding real work",  body: "How teams actually work. Where effort is being duplicated. Where uncertainty is creeping in. Where people are hesitating even though they want to move forward." },
-  { num: "02", label: "Embedding into workflows", body: "When AI enters the conversation, it is always grounded in real workflows, real decisions, and real human judgement. Introduced carefully and documented clearly." },
-  { num: "03", label: "Building confidence",      body: "When people understand what is safe, what is valued, and what will change, they stop experimenting in the shadows and start using AI with confidence." },
+  { num: "01", label: "Understanding real work",   body: "How teams actually work. Where effort is being duplicated. Where uncertainty is creeping in. Where people are hesitating even though they want to move forward." },
+  { num: "02", label: "Embedding into workflows",  body: "When AI enters the conversation, it is always grounded in real workflows, real decisions, and real human judgement. Introduced carefully and documented clearly." },
+  { num: "03", label: "Building confidence",       body: "When people understand what is safe, what is valued, and what will change, they stop experimenting in the shadows and start using AI with confidence." },
 ];
 
 function ApproachRow({ item, idx }: { item: typeof approachData[0]; idx: number }) {
@@ -1372,10 +795,15 @@ function ApproachRow({ item, idx }: { item: typeof approachData[0]; idx: number 
   return (
     <div>
       <div ref={lineRef} style={{ height: "1px", background: T.border }} />
-      <div ref={rowRef} style={{ opacity: 0, display: "grid", gridTemplateColumns: "64px 1fr", gap: "2rem", alignItems: "start", padding: "2.5rem 0" }}>
-        <span className="font-heading font-bold leading-none" style={{ fontSize: "2.6rem", color: T.primary, opacity: 0.14, letterSpacing: "-0.03em", userSelect: "none" }}>{item.num}</span>
+      <div ref={rowRef} className="ab-approach-row" style={{ opacity: 0 }}>
+        <span className="font-heading font-bold leading-none" style={{
+          fontSize: "clamp(1.8rem, 3vw, 2.6rem)", color: T.primary,
+          opacity: 0.14, letterSpacing: "-0.03em", userSelect: "none",
+        }}>{item.num}</span>
         <div>
-          <h3 className="font-heading font-semibold mb-3" style={{ fontSize: "clamp(1rem, 1.55vw, 1.18rem)", color: T.fg, lineHeight: 1.3 }}>{item.label}</h3>
+          <h3 className="font-heading font-semibold mb-3" style={{
+            fontSize: "clamp(1rem, 1.55vw, 1.18rem)", color: T.fg, lineHeight: 1.3,
+          }}>{item.label}</h3>
           <p className="font-body" style={{ fontSize: "0.875rem", color: T.fgMuted, lineHeight: 1.82, margin: 0 }}>{item.body}</p>
         </div>
       </div>
@@ -1387,12 +815,16 @@ const ApproachSection = () => {
   const headerRef = useRef<HTMLDivElement>(null);
   useReveal(headerRef as React.RefObject<HTMLElement>);
   return (
-    <section style={{ background: T.bg, padding: "88px 0" }}>
+    <section className="ab-pad" style={{ background: T.bg }}>
       <div className="aurion-container">
         <div ref={headerRef} style={{ opacity: 0, maxWidth: "540px", marginBottom: "2.5rem" }}>
           <SLabel>The Approach</SLabel>
-          <h2 className="aurion-heading-lg leading-tight mb-4" style={{ margin: "0 0 0.9rem" }}>My work sits in the space between people and systems.</h2>
-          <p className="font-body" style={{ fontSize: "1.05rem", color: T.fgMuted, lineHeight: 1.75 }}>It starts with listening. Only after that do we talk about AI.</p>
+          <h2 className="aurion-heading-lg leading-tight mb-4" style={{ margin: "0 0 0.9rem" }}>
+            My work sits in the space between people and systems.
+          </h2>
+          <p className="font-body" style={{ fontSize: "1.05rem", color: T.fgMuted, lineHeight: 1.75 }}>
+            It starts with listening. Only after that do we talk about AI.
+          </p>
         </div>
         <div style={{ maxWidth: "700px" }}>
           {approachData.map((item, i) => <ApproachRow key={item.num} item={item} idx={i} />)}
@@ -1404,7 +836,306 @@ const ApproachSection = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 6. PSYCHOLOGICAL CONTRACT
+// 6. FOUNDER SECTION — dedicated showcase
+//
+// Animation: "Curtain Wipe Reveal"
+//
+// The portrait begins fully hidden behind a warm-coloured curtain div.
+// On scroll trigger, the curtain's transformOrigin is anchored to the RIGHT,
+// then scaleX animates 1 → 0. This means the left edge of the curtain sweeps
+// rightward, progressively revealing the photo from LEFT to RIGHT — like a
+// cinema screen opening or a stage curtain pulling aside.
+//
+// Simultaneously:
+//   • The image breathes in from scale 1.1 → 1.0
+//   • A warm colour grade fades onto the photo post-reveal
+//   • A floating name-plate badge slides in from the right edge
+//
+// Content side:
+//   • Header reveals upward via useReveal
+//   • Divider line draws left → right via useLineDraw
+//   • Two bio paragraphs stagger in with slight delay
+//   • Intention quote slides in from the right with a left-border treatment
+//   • Credential chips appear last as a flex row
+// ═══════════════════════════════════════════════════════════════════════════════
+function FounderSection() {
+  // Photo refs
+  const photoRef   = useRef<HTMLDivElement>(null);
+  const curtainRef = useRef<HTMLDivElement>(null);
+  const imgRef     = useRef<HTMLImageElement>(null);
+  const gradeRef   = useRef<HTMLDivElement>(null);
+  const badgeRef   = useRef<HTMLDivElement>(null);
+
+  // Content refs
+  const headerRef = useRef<HTMLDivElement>(null);
+  const lineRef   = useRef<HTMLDivElement>(null);
+  const para1Ref  = useRef<HTMLParagraphElement>(null);
+  const para2Ref  = useRef<HTMLParagraphElement>(null);
+  const quoteRef  = useRef<HTMLDivElement>(null);
+  const credsRef  = useRef<HTMLDivElement>(null);
+
+  // ── Curtain wipe ────────────────────────────────────────────────────────────
+  useEffect(() => {
+    const photo   = photoRef.current;
+    const curtain = curtainRef.current;
+    const img     = imgRef.current;
+    const badge   = badgeRef.current;
+    const grade   = gradeRef.current;
+    if (!photo || !curtain || !img) return;
+
+    // Initial states
+    // Curtain starts fully covering the image
+    gsap.set(curtain, {
+      scaleX: 1,
+      transformOrigin: "right center", // RIGHT anchor → left edge sweeps right on reveal
+      immediateRender: true,
+    });
+    gsap.set(img,   { scale: 1.1, force3D: true, immediateRender: true });
+    if (grade) gsap.set(grade, { opacity: 0, immediateRender: true });
+    if (badge) gsap.set(badge, { opacity: 0, x: 20, force3D: true, immediateRender: true });
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: photo,
+          start: "top 80%",
+          once: true,
+          invalidateOnRefresh: true,
+        },
+      });
+
+      // Phase 1: Curtain wipes away LEFT to RIGHT
+      tl.to(curtain, {
+        scaleX: 0,
+        duration: 1.0,
+        ease: "power3.inOut",
+      });
+
+      // Phase 2: Image breathes into focus
+      tl.to(img, {
+        scale: 1,
+        duration: 1.15,
+        ease: "power2.out",
+        force3D: true,
+      }, "<+0.06");
+
+      // Phase 3: Warm grade settles
+      if (grade) {
+        tl.to(grade, { opacity: 1, duration: 0.7, ease: "power2.out" }, ">-0.5");
+      }
+
+      // Phase 4: Badge slides in from right
+      if (badge) {
+        tl.to(badge, {
+          opacity: 1, x: 0,
+          duration: 0.55, ease: "back.out(1.5)", force3D: true,
+        }, ">-0.3");
+      }
+    }, photo);
+
+    return () => ctx.revert();
+  }, []);
+
+  // ── Content reveals (scroll-triggered via hooks) ─────────────────────────
+  useReveal(headerRef as React.RefObject<HTMLElement>, { y: 22 });
+  useLineDraw(lineRef as React.RefObject<HTMLElement>, 0.12);
+  useReveal(para1Ref  as React.RefObject<HTMLElement>, { y: 18, delay: 0.1 });
+  useReveal(para2Ref  as React.RefObject<HTMLElement>, { y: 18, delay: 0.18 });
+  useReveal(quoteRef  as React.RefObject<HTMLElement>, { x: 28, y: 0, delay: 0.26 });
+  useReveal(credsRef  as React.RefObject<HTMLElement>, { y: 14, delay: 0.34 });
+
+  const creds = [
+    "Behavioural Psychology",
+    "Organisational Learning",
+    "Human-Centred AI",
+  ];
+
+  return (
+    <section
+      className="ab-pad"
+      style={{ background: T.bg, position: "relative", overflow: "hidden" }}
+    >
+      {/* Warm radial atmosphere — top right */}
+      <div aria-hidden style={{
+        position: "absolute", top: 0, right: 0,
+        width: "50vw", height: "100%",
+        background: `radial-gradient(ellipse at top right, hsla(38,45%,55%,0.065) 0%, transparent 62%)`,
+        pointerEvents: "none",
+      }} />
+
+      <div className="aurion-container" style={{ position: "relative", zIndex: 1 }}>
+
+        {/* Section label row */}
+        <div style={{
+          display: "flex", alignItems: "center", gap: "1.5rem",
+          marginBottom: "clamp(2.5rem, 4vw, 3.5rem)",
+        }}>
+          <SLabel>The Practitioner</SLabel>
+          <div style={{ flex: 1, height: "1px", background: T.border, maxWidth: "220px" }} />
+        </div>
+
+        <div className="ab-founder-grid">
+
+          {/* ── Left: Portrait photo ── */}
+          <div ref={photoRef} style={{ position: "relative" }}>
+
+            {/* Curtain overlay — scaleX 1→0 left-to-right on scroll */}
+            <div
+              ref={curtainRef}
+              aria-hidden
+              style={{
+                position: "absolute", inset: 0,
+                background: T.bg, // matches page bg — seamless entry
+                zIndex: 4,
+                borderRadius: "5px",
+                willChange: "transform",
+              }}
+            />
+
+            {/* Shadow bloom beneath the card */}
+            <div aria-hidden style={{
+              position: "absolute", inset: 0,
+              background: `radial-gradient(ellipse at 50% 80%, hsla(0,55%,32%,0.2) 0%, transparent 68%)`,
+              transform: "translateY(18px) scale(0.94)",
+              filter: "blur(30px)",
+              zIndex: 0, borderRadius: "8px", pointerEvents: "none",
+            }} />
+
+            {/* Image container */}
+            <div style={{
+              position: "relative", zIndex: 1,
+              overflow: "hidden", borderRadius: "5px",
+              boxShadow: "0 22px 60px -14px rgba(0,0,0,0.30)",
+            }}>
+              <img
+                ref={imgRef}
+                src={founderPhoto}
+                alt="Founder of Aurion"
+                className="ab-founder-photo"
+                style={{
+                  width: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center 12%",
+                  display: "block",
+                  transformOrigin: "center top",
+                  willChange: "transform",
+                }}
+              />
+
+              {/* Warm colour grade */}
+              <div ref={gradeRef} aria-hidden style={{
+                position: "absolute", inset: 0, opacity: 0,
+                background: `linear-gradient(155deg, hsla(0,55%,32%,0.13) 0%, hsla(38,45%,55%,0.05) 48%, transparent 70%)`,
+                mixBlendMode: "multiply", pointerEvents: "none",
+              }} />
+
+              {/* Bottom fade to page bg */}
+              <div aria-hidden style={{
+                position: "absolute", bottom: 0, left: 0, right: 0, height: "32%",
+                background: `linear-gradient(to top, ${T.bg} 0%, transparent 100%)`,
+                pointerEvents: "none",
+              }} />
+            </div>
+
+            {/* Floating name badge */}
+            <div ref={badgeRef} className="ab-founder-badge" style={{ opacity: 0, zIndex: 10 }}>
+              <div style={{
+                background: T.bgCard,
+                border: `1px solid ${T.border}`,
+                borderRadius: "3px",
+                padding: "0.9rem 1.35rem",
+                boxShadow: "0 10px 28px -6px rgba(0,0,0,0.15)",
+                minWidth: "178px",
+              }}>
+                <div style={{ height: "2px", width: "22px", background: T.primary, borderRadius: "1px", marginBottom: "0.6rem" }} />
+                <p className="font-heading font-semibold" style={{ fontSize: "0.88rem", color: T.fg, lineHeight: 1.2, marginBottom: "0.2rem" }}>
+                  Founder, Aurion
+                </p>
+                <p className="font-body" style={{ fontSize: "0.68rem", color: T.fgMuted, letterSpacing: "0.06em", textTransform: "uppercase" }}>
+                  AI Adoption &amp; Enablement
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Right: Content ── */}
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: 0 }}>
+
+            {/* Heading */}
+            <div ref={headerRef} style={{ opacity: 0, marginBottom: "1.4rem" }}>
+              <h2 className="aurion-heading-lg leading-tight" style={{ margin: 0 }}>
+                Grounded in psychology.<br />
+                <span style={{ color: T.primary }}>Built for practice.</span>
+              </h2>
+            </div>
+
+            {/* Animated divider */}
+            <div ref={lineRef} style={{
+              height: "2px", maxWidth: "220px",
+              background: `linear-gradient(90deg, ${T.primary}, ${T.gold}, transparent)`,
+              opacity: 0.7, marginBottom: "1.75rem",
+            }} />
+
+            {/* Bio paras */}
+            <p ref={para1Ref} className="font-body" style={{
+              opacity: 0,
+              fontSize: "clamp(0.92rem, 1.25vw, 1.02rem)",
+              color: T.fgMid, lineHeight: 1.84, marginBottom: "1rem",
+            }}>
+              My background sits at the intersection of behavioural psychology, learning design, and organisational change. I have worked inside complex institutions and fast-moving teams — where real decisions happen under real pressure, not in workshops.
+            </p>
+
+            <p ref={para2Ref} className="font-body" style={{
+              opacity: 0,
+              fontSize: "clamp(0.92rem, 1.25vw, 1.02rem)",
+              color: T.fgMid, lineHeight: 1.84, marginBottom: "1.75rem",
+            }}>
+              That experience is what Aurion is built on. Not frameworks borrowed from elsewhere — a direct understanding of how people actually behave when change arrives uninvited.
+            </p>
+
+            {/* Intention quote — bordered left */}
+            <div ref={quoteRef} style={{
+              opacity: 0,
+              borderLeft: `3px solid ${T.primary}`,
+              paddingLeft: "1.35rem",
+              marginBottom: "2rem",
+            }}>
+              <p className="font-heading font-medium" style={{
+                fontSize: "clamp(0.95rem, 1.4vw, 1.1rem)",
+                color: T.fg, lineHeight: 1.65, fontStyle: "italic", marginBottom: "0.65rem",
+              }}>
+                "I built Aurion because organisations deserve AI adoption that feels like a natural evolution — not a forced march managed by people who have never worked inside one."
+              </p>
+              <span className="font-body font-semibold uppercase" style={{
+                fontSize: "9.5px", letterSpacing: "0.2em", color: T.fgMuted,
+              }}>
+                The founding intention
+              </span>
+            </div>
+
+            {/* Credential tags */}
+            <div ref={credsRef} className="ab-creds" style={{ opacity: 0 }}>
+              {creds.map((c) => (
+                <span key={c} className="font-body font-semibold" style={{
+                  fontSize: "0.72rem", letterSpacing: "0.13em",
+                  textTransform: "uppercase", color: T.primary,
+                  background: "hsla(0,55%,32%,0.06)",
+                  border: `1px solid hsla(0,55%,32%,0.16)`,
+                  borderRadius: "2px", padding: "0.35rem 0.9rem",
+                  display: "inline-block",
+                }}>{c}</span>
+              ))}
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 7. PSYCHOLOGICAL CONTRACT
 // ═══════════════════════════════════════════════════════════════════════════════
 const contractData = [
   { label: "Expectations", body: "What people believe AI will do and what it means for their role, their value, and their future at work." },
@@ -1426,15 +1157,26 @@ function ContractCard({ item, idx }: { item: typeof contractData[0]; idx: number
     return () => ctx.revert();
   }, [idx]);
   return (
-    <div ref={cardRef} style={{ opacity: 0, position: "relative", background: "hsl(15,18%,16%)", border: `1px solid ${T.offRule}`, borderRadius: "4px", padding: "2.25rem 2rem", boxShadow: "0 2px 12px -3px rgba(0,0,0,0.22)", willChange: "transform, box-shadow", transition: "border-color 0.25s ease", overflow: "hidden" }}>
+    <div ref={cardRef} style={{
+      opacity: 0, position: "relative",
+      background: "hsl(15,18%,16%)", border: `1px solid ${T.offRule}`,
+      borderRadius: "4px", padding: "clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 2.5vw, 2rem)",
+      boxShadow: "0 2px 12px -3px rgba(0,0,0,0.22)",
+      willChange: "transform, box-shadow",
+      transition: "border-color 0.25s ease", overflow: "hidden",
+    }}>
       <div ref={glowRef} style={{ position: "absolute", inset: 0, borderRadius: "4px", pointerEvents: "none", zIndex: 0 }} />
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "2px", background: T.gold, borderRadius: "4px 4px 0 0" }} />
       <div style={{ position: "relative", zIndex: 1 }}>
         <div className="flex items-center gap-3 mb-5">
-          <span className="font-heading font-bold" style={{ fontSize: "1.2rem", color: T.dkGold, opacity: 0.3, lineHeight: 1 }}>{String(idx + 1).padStart(2, "0")}</span>
+          <span className="font-heading font-bold" style={{
+            fontSize: "1.2rem", color: T.dkGold, opacity: 0.3, lineHeight: 1,
+          }}>{String(idx + 1).padStart(2, "0")}</span>
           <div style={{ flex: 1, height: "1px", background: T.offRule }} />
         </div>
-        <h3 className="font-heading font-semibold mb-3" style={{ fontSize: "clamp(1rem, 1.5vw, 1.18rem)", color: T.offWhite, lineHeight: 1.25 }}>{item.label}</h3>
+        <h3 className="font-heading font-semibold mb-3" style={{
+          fontSize: "clamp(1rem, 1.5vw, 1.18rem)", color: T.offWhite, lineHeight: 1.25,
+        }}>{item.label}</h3>
         <p className="font-body" style={{ fontSize: "0.875rem", color: T.offDim, lineHeight: 1.82, margin: 0 }}>{item.body}</p>
       </div>
     </div>
@@ -1449,23 +1191,44 @@ const ContractSection = () => {
   useReveal(paraRef   as React.RefObject<HTMLElement>, { y: 18, delay: 0.1 });
   useReveal(callRef   as React.RefObject<HTMLElement>, { y: 16, delay: 0.24 });
   return (
-    <section style={{ background: T.bgDark, padding: "88px 0", position: "relative", overflow: "hidden" }}>
-      <div aria-hidden="true" style={{ position: "absolute", top: "-20%", left: "50%", transform: "translateX(-50%)", width: "68vw", height: "55vh", background: "radial-gradient(ellipse, hsla(0,55%,32%,0.18) 0%, transparent 65%)", filter: "blur(60px)", pointerEvents: "none" }} />
+    <section className="ab-pad" style={{ background: T.bgDark, position: "relative", overflow: "hidden" }}>
+      <div aria-hidden="true" style={{
+        position: "absolute", top: "-20%", left: "50%", transform: "translateX(-50%)",
+        width: "68vw", height: "55vh",
+        background: "radial-gradient(ellipse, hsla(0,55%,32%,0.18) 0%, transparent 65%)",
+        filter: "blur(60px)", pointerEvents: "none",
+      }} />
       <div className="aurion-container" style={{ position: "relative", zIndex: 1 }}>
         <div ref={headerRef} style={{ opacity: 0, marginBottom: "1rem" }}>
           <SLabel light>The Flagship Lens</SLabel>
-          <h2 className="aurion-heading-lg leading-tight" style={{ color: T.offWhite, maxWidth: "580px", margin: 0 }}>The AI Psychological Contract Framework</h2>
+          <h2 className="aurion-heading-lg leading-tight" style={{ color: T.offWhite, maxWidth: "580px", margin: 0 }}>
+            The AI Psychological Contract Framework
+          </h2>
         </div>
-        <p ref={paraRef} className="font-body" style={{ opacity: 0, fontSize: "1.05rem", color: T.offDim, lineHeight: 1.78, maxWidth: "580px", marginBottom: "3rem" }}>
+        <p ref={paraRef} className="font-body" style={{
+          opacity: 0, fontSize: "1.05rem", color: T.offDim,
+          lineHeight: 1.78, maxWidth: "580px", marginBottom: "3rem",
+        }}>
           Aurion's approach is rooted in behavioural psychology and organisational practice. This framework helps leaders understand the expectations, assumptions, and trust dynamics that shape adoption long before any tool does.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+        <div className="ab-contract-grid" style={{ marginBottom: "2rem" }}>
           {contractData.map((item, i) => <ContractCard key={item.label} item={item} idx={i} />)}
         </div>
-        <div ref={callRef} style={{ opacity: 0, display: "inline-flex", alignItems: "center", gap: "1.25rem", background: "hsl(15,18%,16%)", border: `1px solid ${T.offRule}`, borderRadius: "3px", padding: "1.1rem 1.75rem" }}>
-          <span className="font-heading font-medium" style={{ fontSize: "0.95rem", fontStyle: "italic", color: T.offWhite }}>This is not technology-first consulting.</span>
-          <span style={{ width: "1px", height: "16px", background: T.offRule, flexShrink: 0 }} />
-          <span className="font-body font-semibold uppercase" style={{ fontSize: "10px", letterSpacing: "0.18em", color: T.dkGold }}>People-first AI adoption.</span>
+        <div ref={callRef} style={{ opacity: 0 }}>
+          <div className="ab-callout-inline" style={{
+            background: "hsl(15,18%,16%)",
+            border: `1px solid ${T.offRule}`,
+            borderRadius: "3px",
+            padding: "1.1rem 1.75rem",
+          }}>
+            <span className="font-heading font-medium" style={{ fontSize: "0.95rem", fontStyle: "italic", color: T.offWhite }}>
+              This is not technology-first consulting.
+            </span>
+            <span style={{ width: "1px", height: "16px", background: T.offRule, flexShrink: 0 }} />
+            <span className="font-body font-semibold uppercase" style={{ fontSize: "10px", letterSpacing: "0.18em", color: T.dkGold }}>
+              People-first AI adoption.
+            </span>
+          </div>
         </div>
       </div>
     </section>
@@ -1473,7 +1236,7 @@ const ContractSection = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 7. WHO IT'S FOR
+// 8. WHO IT'S FOR — simplified (founder portrait now in dedicated section above)
 // ═══════════════════════════════════════════════════════════════════════════════
 const whoItems = [
   "Organisations already experimenting, even informally",
@@ -1485,47 +1248,114 @@ const whoItems = [
 ];
 
 const WhoSection = () => {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const bioRef    = useRef<HTMLDivElement>(null);
-  const itemRefs  = whoItems.map(() => useRef<HTMLLIElement>(null));
+  const headerRef  = useRef<HTMLDivElement>(null);
+  const rightRef   = useRef<HTMLDivElement>(null);
+  const itemRefs   = whoItems.map(() => useRef<HTMLLIElement>(null));
+
   useReveal(headerRef as React.RefObject<HTMLElement>);
-  useReveal(bioRef    as React.RefObject<HTMLElement>, { x: 24, y: 0, delay: 0.12 });
+  useReveal(rightRef  as React.RefObject<HTMLElement>, { x: 24, y: 0, delay: 0.1 });
+
   useEffect(() => {
     itemRefs.forEach((ref, i) => {
       const el = ref.current;
       if (!el) return;
       gsap.set(el, { opacity: 0, x: -18, force3D: true, immediateRender: true });
       const ctx = gsap.context(() => {
-        gsap.to(el, { opacity: 1, x: 0, duration: 0.6, ease: "power2.out", delay: i * 0.06, force3D: true, scrollTrigger: { trigger: el, start: () => "top 92%", once: true, invalidateOnRefresh: true } });
+        gsap.to(el, {
+          opacity: 1, x: 0, duration: 0.6, ease: "power2.out",
+          delay: i * 0.06, force3D: true,
+          scrollTrigger: { trigger: el, start: () => "top 92%", once: true, invalidateOnRefresh: true },
+        });
       }, el);
       return () => ctx.revert();
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   return (
-    <section style={{ background: T.bgWarm, padding: "88px 0" }}>
+    <section className="ab-pad" style={{ background: T.bgWarm }}>
       <div className="aurion-container">
         <div ref={headerRef} style={{ opacity: 0, marginBottom: "2.75rem" }}>
           <SLabel>Who Aurion Works Best With</SLabel>
-          <h2 className="aurion-heading-lg leading-tight" style={{ maxWidth: "500px", margin: 0 }}>Already experimenting. Ready to bring coherence.</h2>
+          <h2 className="aurion-heading-lg leading-tight" style={{ maxWidth: "500px", margin: 0 }}>
+            Already experimenting. Ready to bring coherence.
+          </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+
+        <div className="ab-who-grid">
+
+          {/* Left: list */}
           <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
             {whoItems.map((item, i) => (
-              <li key={i} ref={itemRefs[i]} style={{ opacity: 0, display: "flex", alignItems: "flex-start", gap: "0.9rem", padding: "0.95rem 0", borderBottom: `1px solid ${T.border}` }}>
-                <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: T.gold, flexShrink: 0, marginTop: "0.6rem" }} />
-                <span className="font-body" style={{ fontSize: "0.9rem", color: T.fgMid, lineHeight: 1.68 }}>{item}</span>
+              <li
+                key={i}
+                ref={itemRefs[i]}
+                style={{
+                  opacity: 0, display: "flex", alignItems: "flex-start",
+                  gap: "0.9rem", padding: "0.95rem 0",
+                  borderBottom: `1px solid ${T.border}`,
+                }}
+              >
+                <span style={{
+                  width: "5px", height: "5px", borderRadius: "50%",
+                  background: T.gold, flexShrink: 0, marginTop: "0.6rem",
+                }} />
+                <span className="font-body" style={{ fontSize: "0.9rem", color: T.fgMid, lineHeight: 1.68 }}>
+                  {item}
+                </span>
               </li>
             ))}
             <li style={{ borderBottom: `1px solid ${T.border}` }} />
           </ul>
-          <div ref={bioRef} style={{ opacity: 0, background: T.bgCard, border: `1px solid ${T.border}`, borderRadius: "4px", padding: "2.5rem", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: T.primary, borderRadius: "4px 4px 0 0" }} />
-            <SLabel>The Practitioner Behind Aurion</SLabel>
-            <p className="font-body mb-4" style={{ fontSize: "0.875rem", color: T.fgMuted, lineHeight: 1.85 }}>My background is in psychology, learning, and organisational change. I have worked inside complex institutions and fast moving teams, and I understand how decisions actually get made under pressure.</p>
-            <p className="font-body mb-4" style={{ fontSize: "0.875rem", color: T.fgMuted, lineHeight: 1.85 }}>This perspective comes from working within both complex institutions and fast-moving teams, where real decisions happen under real pressure.</p>
-            <p className="font-body font-medium" style={{ fontSize: "0.875rem", color: T.fg, lineHeight: 1.7 }}>That experience shapes everything Aurion does.</p>
+
+          {/* Right: context card */}
+          <div ref={rightRef} style={{ opacity: 0 }}>
+            <div style={{
+              background: T.bgCard, border: `1px solid ${T.border}`,
+              borderRadius: "4px", overflow: "hidden", position: "relative",
+            }}>
+              {/* Top accent */}
+              <div style={{
+                height: "3px",
+                background: `linear-gradient(90deg, ${T.primary}, ${T.gold}66)`,
+              }} />
+
+              <div style={{ padding: "clamp(1.5rem, 3vw, 2.25rem)" }}>
+                <SLabel>Where This Work Is Most Relevant</SLabel>
+                <p className="font-body mb-5" style={{
+                  fontSize: "0.875rem", color: T.fgMuted, lineHeight: 1.85,
+                }}>
+                  Aurion works best with organisations that are already experimenting — even informally — and want to bring coherence to that experimentation without killing momentum.
+                </p>
+                <p className="font-body mb-5" style={{
+                  fontSize: "0.875rem", color: T.fgMuted, lineHeight: 1.85,
+                }}>
+                  Teams that value clarity, responsibility, and human judgement as much as efficiency. This work is especially relevant where trust, compliance, and culture matter — where decisions are complex and people carry the risk.
+                </p>
+
+                {/* Dark callout */}
+                <div style={{
+                  background: T.bgDark,
+                  borderRadius: "3px",
+                  padding: "1.25rem 1.5rem",
+                  marginTop: "0.5rem",
+                }}>
+                  <p className="font-heading font-medium" style={{
+                    fontSize: "0.95rem", color: T.offWhite,
+                    lineHeight: 1.6, marginBottom: "0.4rem",
+                  }}>
+                    This is not technology-first consulting.
+                  </p>
+                  <p className="font-body" style={{
+                    fontSize: "0.8rem", color: T.offDim, lineHeight: 1.6,
+                  }}>
+                    It is people-first AI adoption.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -1533,7 +1363,7 @@ const WhoSection = () => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// 8. CLOSING CTA
+// 9. CLOSING CTA
 // ═══════════════════════════════════════════════════════════════════════════════
 const ClosingCTA = () => {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -1541,22 +1371,41 @@ const ClosingCTA = () => {
   useReveal(wrapRef as React.RefObject<HTMLElement>, { y: 28 });
   useReveal(btnRef  as React.RefObject<HTMLElement>, { y: 18, delay: 0.3 });
   return (
-    <section style={{ background: T.bgDark, padding: "104px 0", position: "relative", overflow: "hidden" }}>
-      <div aria-hidden="true" style={{ position: "absolute", bottom: "-25%", left: "50%", transform: "translateX(-50%)", width: "60vw", height: "50vh", background: "radial-gradient(ellipse, hsla(38,45%,55%,0.07) 0%, transparent 65%)", filter: "blur(50px)", pointerEvents: "none" }} />
-      <div className="aurion-container text-center" style={{ maxWidth: "600px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+    <section className="ab-pad" style={{ background: T.bgDark, position: "relative", overflow: "hidden" }}>
+      <div aria-hidden="true" style={{
+        position: "absolute", bottom: "-25%", left: "50%", transform: "translateX(-50%)",
+        width: "60vw", height: "50vh",
+        background: "radial-gradient(ellipse, hsla(38,45%,55%,0.07) 0%, transparent 65%)",
+        filter: "blur(50px)", pointerEvents: "none",
+      }} />
+      <div
+        className="aurion-container"
+        style={{ textAlign: "center", maxWidth: "600px", margin: "0 auto", position: "relative", zIndex: 1 }}
+      >
         <div ref={wrapRef} style={{ opacity: 0, marginBottom: "2.75rem" }}>
           <SLabel light>The Belief</SLabel>
-          <p className="font-heading font-medium leading-snug mb-6" style={{ fontSize: "clamp(1.35rem, 2.8vw, 2.2rem)", color: T.offWhite, letterSpacing: "-0.01em" }}>
+          <p className="font-heading font-medium leading-snug mb-6" style={{
+            fontSize: "clamp(1.35rem, 2.8vw, 2.2rem)", color: T.offWhite,
+            letterSpacing: "-0.01em",
+          }}>
             When people feel confident, AI becomes a tool for clarity, not confusion.
           </p>
-          <p className="font-body" style={{ fontSize: "clamp(0.875rem, 1.2vw, 1rem)", color: T.offDim, lineHeight: 1.78, fontStyle: "italic" }}>
+          <p className="font-body" style={{
+            fontSize: "clamp(0.875rem, 1.2vw, 1rem)", color: T.offDim,
+            lineHeight: 1.78, fontStyle: "italic",
+          }}>
             A conversation about where AI is showing up in your organisation.
           </p>
         </div>
         <div ref={btnRef} style={{ opacity: 0 }}>
-          <Link to="/contact"
+          <Link
+            to="/contact"
             className="group relative inline-flex items-center gap-3 font-body font-medium rounded-sm overflow-hidden"
-            style={{ padding: "0.875rem 1.8rem", fontSize: "0.95rem", background: T.offWhite, color: T.bgDark, transition: "opacity 0.18s ease", textDecoration: "none" }}
+            style={{
+              padding: "0.875rem 1.8rem", fontSize: "0.95rem",
+              background: T.offWhite, color: T.bgDark,
+              transition: "opacity 0.18s ease", textDecoration: "none",
+            }}
             onMouseEnter={e => { e.currentTarget.style.opacity = "0.87"; }}
             onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
           >
@@ -1577,6 +1426,7 @@ const About = () => {
   usePageMount();
   return (
     <>
+      <style>{css}</style>
       <ReadingBar />
       <Navbar />
       <main>
@@ -1585,6 +1435,7 @@ const About = () => {
         <FounderStory />
         <ValuesSection />
         <ApproachSection />
+        <FounderSection />
         <ContractSection />
         <WhoSection />
         <ClosingCTA />

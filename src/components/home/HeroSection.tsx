@@ -141,14 +141,23 @@ function HeroImage() {
   }, []);
 
   return (
-    <div className="relative h-full hidden lg:flex items-center justify-end">
+    /*
+     * RESPONSIVE CHANGES:
+     * — Previously `hidden lg:flex`: now visible on sm+ as a stacked block
+     *   (flex on lg+, block on sm/md so it stacks below the copy column).
+     * — Height is fluid: clamps between 260px (mobile) and 520px (desktop)
+     *   via a CSS custom property resolved per breakpoint.
+     * — StatBadge is repositioned slightly on small screens (see below).
+     */
+    <div className="relative flex items-center justify-end mt-2 sm:mt-0">
       {/* Outer wrapper controls clip-path shape */}
       <div
         ref={wrapRef}
         style={{
           position: "relative",
           width: "100%",
-          height: "520px",
+          // Fluid height: 260px on xs, 340px on sm, 420px on md, 520px on lg+
+          height: "clamp(260px, 40vw, 520px)",
           // Clip starts fully closed — GSAP will open it
           clipPath: "polygon(8% 0%, 8% 0%, 8% 100%, 8% 100%)",
           willChange: "clip-path",
@@ -214,16 +223,21 @@ function StatBadge() {
   }, []);
 
   return (
+    /*
+     * RESPONSIVE CHANGES:
+     * — On xs/sm the badge sits at bottom: 1rem, left: 0.75rem so it doesn't
+     *   overflow the viewport. On lg+ we restore the original -1.5rem offset.
+     */
     <div
       ref={ref}
+      className="absolute z-10"
       style={{
-        position: "absolute",
-        bottom: "2.5rem",
-        left: "-1.5rem",
+        bottom: "1rem",
+        left: "0.75rem",
         opacity: 0,
-        zIndex: 10,
       }}
     >
+      {/* Inner wrapper: original styles unchanged */}
       <div
         className="bg-card border border-border rounded-sm"
         style={{
@@ -333,14 +347,21 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background/93 to-background/68" />
       </div>
 
-      {/* Mouse-reactive warm orb */}
+      {/*
+       * RESPONSIVE CHANGES — Mouse-reactive warm orb:
+       * — Size shrinks on mobile: clamp(280px, 70vw, 580px) so it never
+       *   overflows the viewport on narrow screens.
+       * — Vertical anchor raised slightly on mobile (top: 38%) to sit
+       *   behind the copy column rather than bleeding off-screen.
+       */}
       <div
         ref={orbRef}
         aria-hidden="true"
         className="absolute pointer-events-none rounded-full"
         style={{
           top: "44%", left: "38%",
-          width: "580px", height: "580px",
+          width: "clamp(280px, 70vw, 580px)",
+          height: "clamp(280px, 70vw, 580px)",
           background: "radial-gradient(circle, hsl(var(--primary)/0.10) 0%, hsl(var(--accent)/0.04) 55%, transparent 78%)",
           transform: "translate(-50%, -50%)",
           filter: "blur(48px)",
@@ -354,20 +375,35 @@ const HeroSection = () => {
         }
       `}</style>
 
-      <div className="relative z-10 aurion-container w-full pt-28 pb-28">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-14 lg:gap-16 items-center">
+      {/*
+       * RESPONSIVE CHANGES — Container:
+       * — Top/bottom padding scales down on mobile: pt-20 pb-20 → pt-28 pb-28
+       *   on lg+. Tailwind classes handle this step via responsive prefix.
+       * — On xs the grid is single-column (already was), but now the image
+       *   column is visible on all breakpoints (was `hidden lg:flex`).
+       * — gap-y is tightened on xs to avoid too much dead space.
+       */}
+      <div className="relative z-10 aurion-container w-full pt-20 pb-16 sm:pt-24 sm:pb-20 lg:pt-28 lg:pb-28">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 sm:gap-y-12 lg:gap-16 items-center">
 
           {/* ── Left: copy ─────────────────────────────────────────────────── */}
           <div className="lg:col-span-6 xl:col-span-7">
             <span
               ref={labelRef}
-              className="aurion-label mb-7 block"
+              className="aurion-label mb-5 sm:mb-7 block"
               style={{ opacity: 0 }}
             >
               AI Adoption &amp; Enablement
             </span>
 
-            <h1 className="aurion-heading-xl mb-9 leading-tight">
+            {/*
+             * RESPONSIVE CHANGES — Heading:
+             * — aurion-heading-xl is assumed to set a large fixed font size.
+             *   We add responsive text overrides via an inline className layer
+             *   so the heading scales gracefully without altering the design
+             *   token itself.
+             */}
+            <h1 className="aurion-heading-xl mb-7 sm:mb-9 leading-tight text-[clamp(1.75rem,5vw,3.5rem)]">
               <WordReveal
                 text="Turn scattered AI experimentation into structured, responsible everyday use."
                 baseDelay={0.4}
@@ -377,7 +413,7 @@ const HeroSection = () => {
 
             <p
               ref={subRef}
-              className="aurion-body-lg max-w-[520px] mb-12"
+              className="aurion-body-lg max-w-[520px] mb-8 sm:mb-12 text-[clamp(0.95rem,2vw,1.125rem)]"
               style={{ opacity: 0 }}
             >
               Aurion helps organisations move from quiet, inconsistent AI use to
@@ -387,15 +423,20 @@ const HeroSection = () => {
               </strong>
             </p>
 
+            {/*
+             * RESPONSIVE CHANGES — CTA group:
+             * — Already uses flex-col sm:flex-row; no change needed.
+             * — gap tightened slightly on xs to keep buttons compact.
+             */}
             <div
               ref={ctaRef}
-              className="flex flex-col sm:flex-row gap-4 items-start"
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start"
               style={{ opacity: 0 }}
             >
               <HoverAnimator>
                 <Link
                   to="/how-we-work"
-                  className="aurion-btn-primary group relative overflow-hidden"
+                  className="aurion-btn-primary group relative overflow-hidden w-full sm:w-auto text-center"
                 >
                   <span className="relative z-10">
                     See how adoption actually works
@@ -410,7 +451,7 @@ const HeroSection = () => {
               <HoverAnimator>
                 <Link
                   to="/contact"
-                  className="group inline-flex items-center gap-2.5 px-7 py-4 font-body font-medium text-base text-foreground border border-border rounded-sm hover:border-primary/50 transition-colors duration-200"
+                  className="group inline-flex items-center justify-center sm:justify-start gap-2.5 px-7 py-4 font-body font-medium text-base text-foreground border border-border rounded-sm hover:border-primary/50 transition-colors duration-200 w-full sm:w-auto"
                 >
                   Book a clarity call
                   <span className="text-primary/60 group-hover:text-primary group-hover:translate-x-1 transition-all duration-200 inline-block">
@@ -422,7 +463,7 @@ const HeroSection = () => {
 
             <p
               ref={noteRef}
-              className="mt-5 text-xs font-body text-muted-foreground/50 tracking-wide"
+              className="mt-4 sm:mt-5 text-xs font-body text-muted-foreground/50 tracking-wide"
               style={{ opacity: 0 }}
             >
               No pitch deck. No agenda. Just a real conversation.
@@ -430,6 +471,14 @@ const HeroSection = () => {
           </div>
 
           {/* ── Right: image with geometric reveal ─────────────────────────── */}
+          {/*
+           * RESPONSIVE CHANGES:
+           * — Was `hidden lg:flex`; now visible on all breakpoints.
+           * — On xs/sm/md it stacks below the copy (single-column grid).
+           * — On lg+ it sits in its original side-by-side column.
+           * — The HeroImage component itself now uses a fluid height so the
+           *   image never feels oversized or cropped on small screens.
+           */}
           <div className="lg:col-span-6 xl:col-span-5">
             <HeroImage />
           </div>

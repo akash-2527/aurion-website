@@ -1,16 +1,3 @@
-// src/App.tsx — relevant additions only
-// Add these two imports alongside your other lazy imports:
-//
-//   const CaseStudies      = lazy(() => import("./pages/CaseStudies"));
-//   const CaseStudyDetail  = lazy(() => import("./pages/CaseStudyDetail"));
-//
-// Then add these two routes inside <Routes>:
-//
-//   <Route path="/case-studies"      element={<CaseStudies />} />
-//   <Route path="/case-studies/:id"  element={<CaseStudyDetail />} />
-//
-// Full App.tsx for reference:
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -25,6 +12,7 @@ const CaseStudyDetail   = lazy(() => import("./pages/CaseStudyDetail"));
 const About             = lazy(() => import("./pages/About"));
 const Resources         = lazy(() => import("./pages/Resources"));
 const Contact           = lazy(() => import("./pages/Contact"));
+const Services          = lazy(() => import("./pages/Services"));
 
 // How We Work sub-pages
 const HWWOverview       = lazy(() => import("./pages/how-we-work/Overview"));
@@ -66,6 +54,7 @@ const App = () => (
             <Route path="/about"                        element={<About />} />
             <Route path="/resources"                    element={<Resources />} />
             <Route path="/contact"                      element={<Contact />} />
+            <Route path="/services"                     element={<Services />} />
             <Route path="*"                             element={<NotFound />} />
           </Routes>
         </Suspense>

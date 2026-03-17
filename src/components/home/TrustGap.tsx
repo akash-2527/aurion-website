@@ -443,7 +443,6 @@
 // };
 
 // export default TrustGap;
-
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -601,6 +600,13 @@ function TrustCard({
   }, [cardRef, node]);
 
   return (
+    /*
+     * RESPONSIVE CHANGES — card padding:
+     * — Fixed "2.25rem 2.1rem 2rem" becomes a fluid clamp so cards don't
+     *   feel cramped on narrow screens. On xs the horizontal padding drops
+     *   to ~1.25rem; on md+ it restores to the original ~2.1rem.
+     * — All inner styles are untouched.
+     */
     <div
       ref={cardRef}
       style={{
@@ -608,7 +614,7 @@ function TrustCard({
         background: T.bgCard,
         border: `1px solid ${T.border}`,
         borderRadius: "8px",
-        padding: "2.25rem 2.1rem 2rem",
+        padding: "clamp(1.25rem, 4vw, 2.25rem) clamp(1.1rem, 3.5vw, 2.1rem) clamp(1.1rem, 3.5vw, 2rem)",
         overflow: "hidden",
         boxShadow: "0 4px 20px -4px rgba(80,25,8,0.08)",
         willChange: "transform, box-shadow",
@@ -635,14 +641,18 @@ function TrustCard({
         zIndex: 1,
       }} />
 
-      {/* Ghost number */}
+      {/*
+       * RESPONSIVE CHANGES — ghost number:
+       * — Fixed 7.5rem font size becomes clamp(4rem, 10vw, 7.5rem) so it
+       *   doesn't overflow card bounds on narrow single-column layouts.
+       */}
       <span
         aria-hidden="true"
         style={{
           position: "absolute",
           bottom: "-1.5rem", right: "1.1rem",
           fontFamily: "Georgia, serif",
-          fontSize: "7.5rem", fontWeight: 700,
+          fontSize: "clamp(4rem, 10vw, 7.5rem)", fontWeight: 700,
           color: node.accent, opacity: 0.052,
           lineHeight: 1, userSelect: "none",
           pointerEvents: "none", letterSpacing: "-0.04em",
@@ -659,6 +669,7 @@ function TrustCard({
         <div style={{
           display: "flex", justifyContent: "space-between",
           alignItems: "flex-start", marginBottom: "1.35rem",
+          gap: "0.5rem",
         }}>
           <span style={{
             display: "inline-block",
@@ -669,6 +680,7 @@ function TrustCard({
             border: `1px solid ${node.accentMid}`,
             borderRadius: "20px",
             padding: "0.28rem 0.85rem",
+            flexShrink: 0,
           }}>
             {node.label}
           </span>
@@ -676,6 +688,7 @@ function TrustCard({
             fontFamily: "Georgia, serif",
             fontSize: "1.05rem",
             color: node.accent, opacity: 0.38, lineHeight: 1,
+            flexShrink: 0,
           }}>
             {node.index}
           </span>
@@ -768,9 +781,19 @@ const TrustGap = () => {
   }, []);
 
   return (
+    /*
+     * RESPONSIVE CHANGES — section padding:
+     * — Fixed "96px 0 108px" becomes fluid via clamp so the section breathes
+     *   on desktop but doesn't feel oversized on mobile.
+     */
     <section
       ref={sectionRef}
-      style={{ background: T.bg, padding: "96px 0 108px", position: "relative", overflow: "hidden" }}
+      style={{
+        background: T.bg,
+        padding: "clamp(56px, 8vw, 96px) 0 clamp(64px, 9vw, 108px)",
+        position: "relative",
+        overflow: "hidden",
+      }}
     >
       {/* Dot grid */}
       <div aria-hidden="true" style={{
@@ -798,7 +821,18 @@ const TrustGap = () => {
       <div className="aurion-container" style={{ position: "relative", zIndex: 1 }}>
 
         {/* Header */}
-        <div ref={headerRef} style={{ maxWidth: "600px", marginBottom: "3.5rem", opacity: 0 }}>
+        <div
+          ref={headerRef}
+          style={{
+            maxWidth: "600px",
+            /*
+             * RESPONSIVE CHANGES — header bottom margin:
+             * — Scales down on mobile so the gap to the grid isn't huge.
+             */
+            marginBottom: "clamp(2rem, 5vw, 3.5rem)",
+            opacity: 0,
+          }}
+        >
           <span style={{
             display: "block", marginBottom: "1.1rem",
             fontSize: "11px", fontWeight: 700,
@@ -822,11 +856,28 @@ const TrustGap = () => {
           </p>
         </div>
 
-        {/* 2×2 grid */}
-        <div
-          ref={gridRef}
-          style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "2.25rem" }}
-        >
+        {/*
+         * RESPONSIVE CHANGES — card grid:
+         * — Fixed "repeat(2, 1fr)" becomes 1 column on xs/sm and 2 columns
+         *   on md+ using a CSS responsive grid via a <style> tag + className.
+         * — Gap scales down on narrow screens via clamp.
+         * — No Tailwind classes used on the grid itself to avoid conflicts
+         *   with the existing inline-style pattern used throughout this file.
+         */}
+        <style>{`
+          .tg-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: clamp(1rem, 3vw, 2.25rem);
+          }
+          @media (min-width: 640px) {
+            .tg-grid {
+              grid-template-columns: repeat(2, 1fr);
+            }
+          }
+        `}</style>
+
+        <div ref={gridRef} className="tg-grid">
           {nodes.map((node, i) => (
             <TrustCard
               key={node.label}
