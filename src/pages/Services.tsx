@@ -906,7 +906,7 @@ function CopilotSection() {
       <div className="aurion-container">
         <SectionHeader num="01" label="Copilot Training"
           title="Training pathways for every stage of AI readiness."
-          sub="Role-relevant, practical training that builds confidence and clarity — not just awareness."
+          sub="Role-relevant, practical training that builds confidence and clarity  not just awareness."
         />
         <div className="sv-cards" style={{ marginBottom: "clamp(2rem, 4vw, 3rem)" }}>
           {cards.map((c, i) => <ServiceCard key={c.num} {...c} delay={i * 0.09} />)}
@@ -949,7 +949,7 @@ function ClaudeSection() {
         <div className="sv-2col">
           <div ref={leftRef} style={{ opacity: 0 }}>
             <p className="font-body" style={{ fontSize: "1.02rem", color: "rgba(245,238,228,0.55)", lineHeight: 1.82, marginBottom: "1.5rem" }}>
-              Every session is customised to your field — whether HR, legal, finance, research or operations. We cover prompting, reasoning, research workflows and domain-specific use cases.
+              Every session is customised to your field  whether HR, legal, finance, research or operations. We cover prompting, reasoning, research workflows and domain-specific use cases.
             </p>
             <p className="font-body" style={{ fontSize: "1.02rem", color: "rgba(245,238,228,0.55)", lineHeight: 1.82, marginBottom: "2.5rem" }}>
               No generic playbooks. No off-the-shelf slides. Just practical training that reflects how your team actually works.
@@ -1006,7 +1006,7 @@ function SystemAdoptionSection() {
       <div className="aurion-container">
         <SectionHeader num="03" label="System Adoption Training"
           title="Behavioural training that makes new systems stick."
-          sub="Friction mapping, role-specific use cases and adoption KPIs — built into every programme."
+          sub="Friction mapping, role-specific use cases and adoption KPIs  built into every programme."
         />
         <div className="sv-2col">
           <div ref={leftRef} style={{ opacity: 0 }}>
@@ -1025,7 +1025,7 @@ function SystemAdoptionSection() {
           </div>
           <div ref={rightRef} style={{ opacity: 0 }}>
             {[
-              { label: "Friction mapping",        body: "We identify where resistance is most likely before training begins — so we design around it." },
+              { label: "Friction mapping",        body: "We identify where resistance is most likely before training begins  so we design around it." },
               { label: "Role-specific use cases", body: "Every session is built around how each team actually uses the system in their real work." },
               { label: "Adoption KPIs",           body: "We define measurable outcomes from the start so confidence and usage can be tracked over time." },
             ].map((item, i) => (
@@ -1054,7 +1054,7 @@ function AutomationSection() {
 
   const cards = [
     { num: "01", title: "Workflow Automation",    body: "Approvals, notifications, data processing and multi-step workflows using Power Automate and Power Apps.",                    accent: C.primary },
-    { num: "02", title: "Agentic AI",             body: "AI agents built inside your tenant using Copilot Studio — knowledge assistants, HR support and policy guidance agents.",     accent: "hsl(0,48%,38%)" },
+    { num: "02", title: "Agentic AI",             body: "AI agents built inside your tenant using Copilot Studio  knowledge assistants, HR support and policy guidance agents.",     accent: "hsl(0,48%,38%)" },
     { num: "03", title: "SharePoint Automations", body: "Document workflows, metadata automation, approvals and knowledge hubs.",                                                      accent: "hsl(16,42%,36%)" },
     { num: "04", title: "Onboarding Automations", body: "End-to-end onboarding journeys including access provisioning, learning paths and manager check-ins.",                        accent: "hsl(32,40%,34%)" },
   ];
@@ -1108,7 +1108,7 @@ function AdvisorySection() {
           </div>
           <div ref={rightRef} style={{ opacity: 0, display: "flex", flexDirection: "column", justifyContent: "center", gap: "1.5rem" }}>
             <p className="font-body" style={{ fontSize: "1.02rem", color: "rgba(245,238,228,0.55)", lineHeight: 1.82 }}>
-              Leadership doesn't need more tools — it needs a clear strategy for how AI fits into the organisation, communicated in a way that builds rather than erodes trust.
+              Leadership doesn't need more tools  it needs a clear strategy for how AI fits into the organisation, communicated in a way that builds rather than erodes trust.
             </p>
             <ShimmerBtn to="/contact" light>Book a leadership consultation</ShimmerBtn>
           </div>
@@ -1273,7 +1273,7 @@ function ClosingCta() {
                 </div>
               </div>
               <p className="sv-ci font-body mb-8" style={{ opacity: 0, fontSize: "0.95rem", color: C.muted, lineHeight: 1.82 }}>
-                Every engagement starts with a short conversation — no pitch deck, no agenda. Just a real discussion about where you are and where you want to be.
+                Every engagement starts with a short conversation  no pitch deck, no agenda. Just a real discussion about where you are and where you want to be.
               </p>
               <Link to="/contact"
                 className="sv-ci group relative inline-flex items-center gap-3 font-body font-medium rounded-sm overflow-hidden"
