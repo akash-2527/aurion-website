@@ -1147,7 +1147,7 @@ function PullQuote() {
           <p ref={textRef} className="sv-pull font-heading font-medium" style={{
             lineHeight: 1.52, color: C.fg, opacity: 0, letterSpacing: "-0.012em",
           }}>
-            "AI adoption only works when people feel supported, understood and set up for success — not pressured into change they don't yet understand."
+            "AI adoption only works when people feel supported, understood and set up for success not pressured into change they don't yet understand."
           </p>
         </div>
       </div>
