@@ -22,7 +22,7 @@ const Contact = () => (
               <div className="space-y-4">
                 <p className="aurion-body">
                   <span className="font-medium text-foreground">Email: </span>
-                  <a href="mailto:hello@aurion.co" className="text-primary hover:underline">aurion.ai.uk@gmail.com</a>
+                  <a href="mailto:aurion.ai.uk@gmail.com" className="text-primary hover:underline">aurion.ai.uk@gmail.com</a>
                 </p>
                 <p className="aurion-body">
                   <span className="font-medium text-foreground">Clarity Call: </span>
