@@ -18,4 +18,16 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        // Long-lived vendor chunks: app deploys no longer invalidate the
+        // browser cache for React / router / GSAP.
+        manualChunks: {
+          react: ["react", "react-dom", "react-router-dom"],
+          gsap: ["gsap", "gsap/ScrollTrigger"],
+        },
+      },
+    },
+  },
 }));

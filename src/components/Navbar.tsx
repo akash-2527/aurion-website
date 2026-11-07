@@ -72,6 +72,14 @@ const Navbar = () => {
     gsap.fromTo(el, { opacity: 0, y: -5 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" });
   }, [mobileOpen]);
 
+  // ── Dropdown centering ─────────────────────────────────────────────────────
+  // GSAP owns this element's transform (y/scale tweens). Express the centering
+  // as xPercent so it tracks the panel's real width instead of a pixel value
+  // GSAP would otherwise bake in from the first measurement.
+  useEffect(() => {
+    if (dropRef.current) gsap.set(dropRef.current, { xPercent: -50, x: 0 });
+  }, []);
+
   // ── Dropdown animation ─────────────────────────────────────────────────────
   useEffect(() => {
     const el = dropRef.current;
@@ -99,9 +107,23 @@ const Navbar = () => {
     }
   }, [dropOpen]);
 
-  const openDrop  = () => { if (dropDebounce.current) clearTimeout(dropDebounce.current); setDropOpen(true); };
-  const closeDrop = () => { dropDebounce.current = setTimeout(() => setDropOpen(false), 90); };
-  useEffect(() => () => { if (dropDebounce.current) clearTimeout(dropDebounce.current); }, []);
+  // Both the wrapper and the panel report mouseleave, so closeDrop can be
+  // called twice in a row. Always clear the pending timer first — otherwise the
+  // first (orphaned) timer still fires and closes the menu under the cursor.
+  const clearDropTimer = () => {
+    if (dropDebounce.current) { clearTimeout(dropDebounce.current); dropDebounce.current = null; }
+  };
+  const openDrop  = () => { clearDropTimer(); setDropOpen(true); };
+  const closeDrop = () => { clearDropTimer(); dropDebounce.current = setTimeout(() => setDropOpen(false), 90); };
+  useEffect(() => clearDropTimer, []);
+
+  // Keyboard: open while focus is inside the menu, close when it leaves / Esc.
+  const onDropBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) closeDrop();
+  };
+  const onDropKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") { clearDropTimer(); setDropOpen(false); }
+  };
 
   // ── Transition helpers ─────────────────────────────────────────────────────
   const dur = scrolled ? "0.6s cubic-bezier(0.4,0,0.2,1)" : "0.9s cubic-bezier(0.22,1,0.36,1)";
@@ -200,7 +222,8 @@ const Navbar = () => {
               })()}
 
               {/* How We Work + dropdown */}
-              <div className="relative" onMouseEnter={openDrop} onMouseLeave={closeDrop}>
+              <div className="relative" onMouseEnter={openDrop} onMouseLeave={closeDrop}
+                onFocus={openDrop} onBlur={onDropBlur} onKeyDown={onDropKeyDown}>
                 <Link to="/how-we-work"
                   aria-haspopup="true" aria-expanded={dropOpen}
                   style={{ ...linkBase, color: isAnyHWW ? AC : IC, background: isAnyHWW ? ABG : "transparent" }}

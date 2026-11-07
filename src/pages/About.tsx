@@ -4,6 +4,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createSmoothFollow } from "@/motion/smoothFollow";
+import { pauseWhenOffscreen } from "@/motion/pauseWhenOffscreen";
 
 import aboutTeam    from "@/assets/about-team.webp";
 import founderPhoto from "@/assets/dp.webp";
@@ -160,8 +162,8 @@ function usePageMount() {
   useEffect(() => {
     window.scrollTo(0, 0);
     ScrollTrigger.clearScrollMemory();
-    let r1: number, r2: number;
-    r1 = requestAnimationFrame(() => {
+    let r2: number;
+    const r1 = requestAnimationFrame(() => {
       r2 = requestAnimationFrame(() => ScrollTrigger.refresh());
     });
     const t = setTimeout(() => ScrollTrigger.refresh(), 350);
@@ -265,11 +267,11 @@ function use3DTilt(
         gsap.to(card, {
           rotateX: 0, rotateY: 0, y: 0,
           boxShadow: "0 2px 10px -2px rgba(0,0,0,0.06)",
-          duration: 0.6, ease: "power2.out", overwrite: true,
+          duration: 0.6, ease: "power2.out", overwrite: "auto",
         });
         card.style.borderColor = T.border;
         gsap.to(glow, {
-          opacity: 0, duration: 0.35, overwrite: true,
+          opacity: 0, duration: 0.35, overwrite: "auto",
           onComplete: () => { glow.style.opacity = "1"; glow.style.background = "none"; },
         });
       }, 40);
@@ -397,33 +399,21 @@ function IrisImage({ src, delay = 0.8 }: { src: string; delay?: number }) {
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) return;
-    let rafId: number;
-    let tRX = 0, tRY = 0, cRX = 0, cRY = 0;
-    const tick = () => {
-      cRX += (tRX - cRX) * 0.07; cRY += (tRY - cRY) * 0.07;
+    // Eases back to 0 on leave by itself (the old extra GSAP tween fought the loop).
+    const follow = createSmoothFollow(0.07, ([cRX, cRY]) => {
       panel.style.transform = `perspective(1200px) rotateX(${cRX}deg) rotateY(${cRY}deg)`;
-      rafId = requestAnimationFrame(tick);
-    };
+    }, [0, 0]);
     const enter = (e: MouseEvent) => {
       const r = panel.getBoundingClientRect();
-      tRX = -(((e.clientY - r.top) / r.height) - 0.5) * 7;
-      tRY =  (((e.clientX - r.left) / r.width) - 0.5) * 9;
+      follow.to(-(((e.clientY - r.top) / r.height) - 0.5) * 7, (((e.clientX - r.left) / r.width) - 0.5) * 9);
     };
-    const move = (e: MouseEvent) => {
-      const r = panel.getBoundingClientRect();
-      tRX = -(((e.clientY - r.top) / r.height) - 0.5) * 7;
-      tRY =  (((e.clientX - r.left) / r.width) - 0.5) * 9;
-    };
-    const leave = () => {
-      tRX = 0; tRY = 0;
-      gsap.to(panel, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "power2.out", overwrite: true });
-    };
-    rafId = requestAnimationFrame(tick);
+    const move = enter;
+    const leave = () => follow.to(0, 0);
     panel.addEventListener("mouseenter", enter, { passive: true });
     panel.addEventListener("mousemove",  move,  { passive: true });
     panel.addEventListener("mouseleave", leave, { passive: true });
     return () => {
-      cancelAnimationFrame(rafId);
+      follow.destroy();
       panel.removeEventListener("mouseenter", enter);
       panel.removeEventListener("mousemove",  move);
       panel.removeEventListener("mouseleave", leave);
@@ -531,8 +521,11 @@ const HeroSection = () => {
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.15 });
-      tl.from(wrap.querySelector(".hero-label"),
-        { opacity: 0, y: 12, duration: 0.5, ease: "power2.out" })
+      // fromTo, not from: the label's inline style is already opacity 0, so a
+      // .from() tween animated 0 -> 0 and the label never appeared.
+      tl.fromTo(wrap.querySelector(".hero-label"),
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" })
         .to(words, { opacity: 1, y: 0, stagger: 0.04, duration: 0.65, ease: "power3.out", force3D: true }, "-=0.2")
         .to(sub,   { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", force3D: true }, "-=0.2")
         .to(cta,   { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", force3D: true }, "-=0.35");
@@ -607,10 +600,13 @@ const MarqueeStrip = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!trackRef.current) return;
+    let stopWatching = () => {};
     const ctx = gsap.context(() => {
-      gsap.to(trackRef.current, { x: "-50%", duration: 32, ease: "none", repeat: -1 });
+      const loop = gsap.to(trackRef.current, { x: "-50%", duration: 32, ease: "none", repeat: -1 });
+      const strip = trackRef.current?.parentElement;
+      if (strip) stopWatching = pauseWhenOffscreen(strip, loop);
     });
-    return () => ctx.revert();
+    return () => { stopWatching(); ctx.revert(); };
   }, []);
   const words = ["People-First AI","·","Calm Adoption","·","Practical Workflows","·","Human Judgement","·","Responsible Use","·","Behavioural Clarity","·"];
   return (
@@ -1250,26 +1246,26 @@ const whoItems = [
 const WhoSection = () => {
   const headerRef  = useRef<HTMLDivElement>(null);
   const rightRef   = useRef<HTMLDivElement>(null);
-  const itemRefs   = whoItems.map(() => useRef<HTMLLIElement>(null));
+  const itemRefs   = useRef<(HTMLLIElement | null)[]>([]);
 
   useReveal(headerRef as React.RefObject<HTMLElement>);
   useReveal(rightRef  as React.RefObject<HTMLElement>, { x: 24, y: 0, delay: 0.1 });
 
   useEffect(() => {
-    itemRefs.forEach((ref, i) => {
-      const el = ref.current;
-      if (!el) return;
-      gsap.set(el, { opacity: 0, x: -18, force3D: true, immediateRender: true });
-      const ctx = gsap.context(() => {
+    // One context for all items so unmount actually kills every ScrollTrigger
+    // (a cleanup returned from inside forEach is silently discarded).
+    const ctx = gsap.context(() => {
+      itemRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(el, { opacity: 0, x: -18, force3D: true, immediateRender: true });
         gsap.to(el, {
           opacity: 1, x: 0, duration: 0.6, ease: "power2.out",
           delay: i * 0.06, force3D: true,
           scrollTrigger: { trigger: el, start: () => "top 92%", once: true, invalidateOnRefresh: true },
         });
-      }, el);
-      return () => ctx.revert();
+      });
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -1289,7 +1285,7 @@ const WhoSection = () => {
             {whoItems.map((item, i) => (
               <li
                 key={i}
-                ref={itemRefs[i]}
+                ref={(el) => { itemRefs.current[i] = el; }}
                 style={{
                   opacity: 0, display: "flex", alignItems: "flex-start",
                   gap: "0.9rem", padding: "0.95rem 0",

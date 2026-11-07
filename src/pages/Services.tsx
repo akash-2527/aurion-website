@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createSmoothFollow } from "@/motion/smoothFollow";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { T, usePageMount, ShimmerBtn } from "./how-we-work/shared";
@@ -315,19 +316,14 @@ function IrisRevealImage({ src }: { src: string }) {
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) return;
-    let raf: number, tX = 0, tY = 0, cX = 0, cY = 0;
-    const onMove = (e: MouseEvent) => {
-      tX = ((e.clientX / window.innerWidth)  - 0.5) * 7;
-      tY = ((e.clientY / window.innerHeight) - 0.5) * -5;
-    };
-    const tick = () => {
-      cX += (tX - cX) * 0.055; cY += (tY - cY) * 0.055;
+    const follow = createSmoothFollow(0.055, ([cX, cY]) => {
       panel.style.transform = `perspective(1100px) rotateY(${cX}deg) rotateX(${cY}deg)`;
-      raf = requestAnimationFrame(tick);
+    }, [0, 0]);
+    const onMove = (e: MouseEvent) => {
+      follow.to(((e.clientX / window.innerWidth) - 0.5) * 7, ((e.clientY / window.innerHeight) - 0.5) * -5);
     };
     window.addEventListener("mousemove", onMove, { passive: true });
-    raf = requestAnimationFrame(tick);
-    return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
+    return () => { window.removeEventListener("mousemove", onMove); follow.destroy(); };
   }, []);
 
   return (
@@ -497,20 +493,15 @@ function Hero() {
     const section = sectionRef.current;
     const orb     = orbRef.current;
     if (!section || !orb) return;
-    let raf: number, tx = 0, ty = 0, cx = 0, cy = 0;
+    const follow = createSmoothFollow(0.04, ([cx, cy]) => {
+      orb.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
+    }, [0, 0]);
     const onMove = (e: MouseEvent) => {
       const r = section.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width  - 0.5) * 80;
-      ty = ((e.clientY - r.top)  / r.height - 0.5) * 50;
-    };
-    const tick = () => {
-      cx += (tx - cx) * 0.04; cy += (ty - cy) * 0.04;
-      orb.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
-      raf = requestAnimationFrame(tick);
+      follow.to(((e.clientX - r.left) / r.width - 0.5) * 80, ((e.clientY - r.top) / r.height - 0.5) * 50);
     };
     section.addEventListener("mousemove", onMove, { passive: true });
-    raf = requestAnimationFrame(tick);
-    return () => { section.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
+    return () => { section.removeEventListener("mousemove", onMove); follow.destroy(); };
   }, []);
 
   // Copy entrance — same skew-reveal used in CaseStudies
@@ -791,8 +782,8 @@ function ServiceCard({ num, title, body, tag, accent = C.primary, delay = 0 }: {
     const leave = () => {
       hov = false; tRX = 0; tRY = 0; tGX = 50; tGY = 50;
       card.style.borderColor = "";
-      gsap.to(card, { rotateX: 0, rotateY: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.6)", overwrite: true });
-      gsap.to(glow, { opacity: 0, duration: 0.3, overwrite: true, onComplete: () => { glow.style.opacity = "1"; glow.style.background = "none"; } });
+      gsap.to(card, { rotateX: 0, rotateY: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.6)", overwrite: "auto" });
+      gsap.to(glow, { opacity: 0, duration: 0.3, overwrite: "auto", onComplete: () => { glow.style.opacity = "1"; glow.style.background = "none"; } });
     };
     card.addEventListener("mouseenter", enter, { passive: true });
     card.addEventListener("mousemove",  move,  { passive: true });
@@ -820,13 +811,17 @@ function ServiceCard({ num, title, body, tag, accent = C.primary, delay = 0 }: {
     return () => ctx.revert();
   }, [delay]);
 
-  // Bottom bar sweep
+  // Bottom bar sweep — collapsed once on mount. Re-setting scaleX:0 on every
+  // hover change made the exit sweep animate 0 -> 0 (bar vanished instantly).
+  useEffect(() => {
+    if (barRef.current) gsap.set(barRef.current, { scaleX: 0, transformOrigin: "left center" });
+  }, []);
   useEffect(() => {
     const bar = barRef.current;
     if (!bar) return;
-    gsap.set(bar, { scaleX: 0, transformOrigin: "left center", immediateRender: true });
-    if (hov) gsap.to(bar, { scaleX: 1, duration: 0.3, ease: "power2.out", overwrite: true });
-    else     gsap.to(bar, { scaleX: 0, duration: 0.22, ease: "power2.in", transformOrigin: "right center", overwrite: true });
+    if (hov) gsap.set(bar, { transformOrigin: "left center" });
+    if (hov) gsap.to(bar, { scaleX: 1, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+    else     gsap.to(bar, { scaleX: 0, duration: 0.22, ease: "power2.in", transformOrigin: "right center", overwrite: "auto" });
   }, [hov]);
 
   return (
@@ -991,14 +986,16 @@ function SystemAdoptionSection() {
   const itemRefs  = useRef<(HTMLLIElement | null)[]>([]);
 
   useEffect(() => {
-    itemRefs.current.forEach((el, i) => {
-      if (!el) return;
-      gsap.set(el, { opacity: 0, x: -18, force3D: true, immediateRender: true });
-      const ctx = gsap.context(() => {
+    // One context for all items so unmount actually kills every ScrollTrigger
+    // (a cleanup returned from inside forEach is silently discarded).
+    const ctx = gsap.context(() => {
+      itemRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.set(el, { opacity: 0, x: -18, force3D: true, immediateRender: true });
         gsap.to(el, { opacity: 1, x: 0, duration: 0.6, ease: "power2.out", delay: i * 0.07, force3D: true, scrollTrigger: { trigger: el, start: "top 92%", once: true, invalidateOnRefresh: true } });
-      }, el);
-      return () => ctx.revert();
+      });
     });
+    return () => ctx.revert();
   }, []);
 
   return (

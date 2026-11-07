@@ -126,8 +126,8 @@ export function use3DTilt(
       debRef.current = setTimeout(() => {
         isHovered.current = false;
         tRX = 0; tRY = 0; tGX = 50; tGY = 50;
-        gsap.to(inner, { rotateX: 0, rotateY: 0, duration: 0.5, ease: "power3.out", force3D: true, overwrite: true });
-        gsap.to(glow,  { opacity: 0, duration: 0.3, ease: "power2.out", overwrite: true,
+        gsap.to(inner, { rotateX: 0, rotateY: 0, duration: 0.5, ease: "power3.out", force3D: true, overwrite: "auto" });
+        gsap.to(glow,  { opacity: 0, duration: 0.3, ease: "power2.out", overwrite: "auto",
           onComplete: () => { glow.style.opacity = "1"; glow.style.background = "none"; } });
       }, 40);
     };
@@ -248,12 +248,12 @@ export function BackNav({
   const onEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.currentTarget.style.color       = T.primary;
     e.currentTarget.style.borderColor = T.primary;
-    gsap.to(arrowRef.current, { x: -5, duration: 0.3, ease: "power2.out", overwrite: true });
+    gsap.to(arrowRef.current, { x: -5, duration: 0.3, ease: "power2.out", overwrite: "auto" });
   };
   const onLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.currentTarget.style.color       = T.muted;
     e.currentTarget.style.borderColor = "transparent";
-    gsap.to(arrowRef.current, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.55)", overwrite: true });
+    gsap.to(arrowRef.current, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.55)", overwrite: "auto" });
   };
 
   return (

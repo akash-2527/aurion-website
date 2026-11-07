@@ -156,9 +156,9 @@ const MagneticCard = ({
       tiltDebRef.current = setTimeout(() => {
         isHovered.current = false;
         targetRX = 0; targetRY = 0; targetGX = 50; targetGY = 50;
-        gsap.to(inner, { rotateX: 0, rotateY: 0, duration: 0.55, ease: "power3.out", force3D: true, overwrite: true });
+        gsap.to(inner, { rotateX: 0, rotateY: 0, duration: 0.55, ease: "power3.out", force3D: true, overwrite: "auto" });
         gsap.to(glow, {
-          opacity: 0, duration: 0.35, ease: "power2.out", overwrite: true,
+          opacity: 0, duration: 0.35, ease: "power2.out", overwrite: "auto",
           onComplete: () => {
             glow.style.background = "radial-gradient(circle at 50% 50%, hsl(var(--primary)/0) 0%, transparent 65%)";
             glow.style.opacity = "1";
@@ -229,7 +229,7 @@ const MagneticCard = ({
         { height: panel.offsetHeight, opacity: panel.style.opacity === "" ? 0 : parseFloat(panel.style.opacity) },
         {
           height: targetH, opacity: 1,
-          duration: 0.4, ease: "power3.out", overwrite: true,
+          duration: 0.4, ease: "power3.out", overwrite: "auto",
           onComplete: () => { panel.style.height = "auto"; },
         }
       );
@@ -240,7 +240,7 @@ const MagneticCard = ({
       gsap.fromTo(
         panel,
         { height: currentH, opacity: parseFloat(panel.style.opacity) || 1 },
-        { height: 0, opacity: 0, duration: 0.28, ease: "power2.in", overwrite: true }
+        { height: 0, opacity: 0, duration: 0.28, ease: "power2.in", overwrite: "auto" }
       );
     }
   }, [active]);

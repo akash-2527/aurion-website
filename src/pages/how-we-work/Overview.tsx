@@ -121,8 +121,8 @@ function VenetianImage({
     const outer = outerRef.current;
     const img   = imgRef.current;
     if (!outer || !img) return;
-    const onEnter = () => gsap.to(img, { filter: "brightness(1.08)", duration: 0.45, ease: "power2.out", overwrite: true });
-    const onLeave = () => gsap.to(img, { filter: "brightness(1)",    duration: 0.45, ease: "power2.out", overwrite: true });
+    const onEnter = () => gsap.to(img, { filter: "brightness(1.08)", duration: 0.45, ease: "power2.out", overwrite: "auto" });
+    const onLeave = () => gsap.to(img, { filter: "brightness(1)",    duration: 0.45, ease: "power2.out", overwrite: "auto" });
     outer.addEventListener("mouseenter", onEnter, { passive: true });
     outer.addEventListener("mouseleave", onLeave, { passive: true });
     return () => {

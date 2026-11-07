@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { createSmoothFollow } from "@/motion/smoothFollow";
+import { pauseWhenOffscreen } from "@/motion/pauseWhenOffscreen";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { studies } from "@/data/caseStudies";
@@ -85,20 +87,14 @@ function DiamondImage({ src, delay = 0.6 }: { src: string; delay?: number }) {
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) return;
-    let rafId: number;
-    let tx = 0, ty = 0, cx = 0, cy = 0;
-    const onMove = (e: MouseEvent) => {
-      tx = ((e.clientX / window.innerWidth)  - 0.5) * -10;
-      ty = ((e.clientY / window.innerHeight) - 0.5) * -6;
-    };
-    const tick = () => {
-      cx += (tx - cx) * 0.06; cy += (ty - cy) * 0.06;
+    const follow = createSmoothFollow(0.06, ([cx, cy]) => {
       panel.style.transform = `translate(${cx}px, ${cy}px)`;
-      rafId = requestAnimationFrame(tick);
+    }, [0, 0]);
+    const onMove = (e: MouseEvent) => {
+      follow.to(((e.clientX / window.innerWidth) - 0.5) * -10, ((e.clientY / window.innerHeight) - 0.5) * -6);
     };
     window.addEventListener("mousemove", onMove, { passive: true });
-    rafId = requestAnimationFrame(tick);
-    return () => { window.removeEventListener("mousemove", onMove); cancelAnimationFrame(rafId); };
+    return () => { window.removeEventListener("mousemove", onMove); follow.destroy(); };
   }, []);
 
   return (
@@ -192,10 +188,12 @@ function MarqueeStrip() {
   useEffect(() => {
     gsap.set(wrapRef.current, { opacity: 0 });
     gsap.to(wrapRef.current, { opacity: 1, duration: 0.8, delay: 1.3, ease: "power2.out" });
+    let stopWatching = () => {};
     const ctx = gsap.context(() => {
-      gsap.to(trackRef.current, { x: "-50%", duration: 36, ease: "none", repeat: -1 });
+      const loop = gsap.to(trackRef.current, { x: "-50%", duration: 36, ease: "none", repeat: -1 });
+      if (wrapRef.current) stopWatching = pauseWhenOffscreen(wrapRef.current, loop);
     });
-    return () => ctx.revert();
+    return () => { stopWatching(); ctx.revert(); };
   }, []);
   return (
     <div ref={wrapRef} style={{ overflow: "hidden", borderBottom: `1px solid ${C.border}`, opacity: 0 }}>
@@ -223,20 +221,15 @@ function Hero() {
     const section = sectionRef.current;
     const orb     = orbRef.current;
     if (!section || !orb) return;
-    let raf: number, tx = 0, ty = 0, cx = 0, cy = 0;
+    const follow = createSmoothFollow(0.04, ([cx, cy]) => {
+      orb.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
+    }, [0, 0]);
     const onMove = (e: MouseEvent) => {
       const r = section.getBoundingClientRect();
-      tx = ((e.clientX - r.left) / r.width  - 0.5) * 80;
-      ty = ((e.clientY - r.top)  / r.height - 0.5) * 50;
-    };
-    const tick = () => {
-      cx += (tx - cx) * 0.04; cy += (ty - cy) * 0.04;
-      orb.style.transform = `translate(calc(-50% + ${cx}px), calc(-50% + ${cy}px))`;
-      raf = requestAnimationFrame(tick);
+      follow.to(((e.clientX - r.left) / r.width - 0.5) * 80, ((e.clientY - r.top) / r.height - 0.5) * 50);
     };
     section.addEventListener("mousemove", onMove, { passive: true });
-    raf = requestAnimationFrame(tick);
-    return () => { section.removeEventListener("mousemove", onMove); cancelAnimationFrame(raf); };
+    return () => { section.removeEventListener("mousemove", onMove); follow.destroy(); };
   }, []);
 
   // Entrance
@@ -368,13 +361,18 @@ function StudyRow({ study, index, isLast }: {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const bodyRef  = useRef<HTMLParagraphElement>(null);
   const tagsRef  = useRef<HTMLDivElement>(null);
-  const statRef  = useRef<HTMLDivElement>(null);
-  const ctaRef   = useRef<HTMLAnchorElement>(null);
-  const arrowRef = useRef<HTMLSpanElement>(null);
+  // Stat + CTA are rendered twice (inline < lg, aside >= lg); each copy needs
+  // its own ref or one of them is never revealed and stays at opacity 0.
+  const statRef      = useRef<HTMLDivElement>(null);
+  const ctaRef       = useRef<HTMLAnchorElement>(null);
+  const arrowRef     = useRef<HTMLSpanElement>(null);
+  const asideStatRef  = useRef<HTMLDivElement>(null);
+  const asideCtaRef   = useRef<HTMLAnchorElement>(null);
+  const asideArrowRef = useRef<HTMLSpanElement>(null);
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    const els = [numRef.current, metaRef.current, titleRef.current, bodyRef.current, tagsRef.current, statRef.current, ctaRef.current].filter(Boolean) as HTMLElement[];
+    const els = [numRef.current, metaRef.current, titleRef.current, bodyRef.current, tagsRef.current, statRef.current, ctaRef.current, asideStatRef.current, asideCtaRef.current].filter(Boolean) as HTMLElement[];
     gsap.set(ruleRef.current, { scaleX: 0, transformOrigin: "left center" });
     gsap.set(els, { opacity: 0, y: 22, force3D: true });
     const ctx = gsap.context(() => {
@@ -386,10 +384,10 @@ function StudyRow({ study, index, isLast }: {
   }, [index]);
 
   useEffect(() => {
-    const arrow = arrowRef.current;
-    if (!arrow) return;
-    if (hovered) gsap.to(arrow, { x: 5, duration: 0.3, ease: "power2.out" });
-    else         gsap.to(arrow, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.55)" });
+    const arrows = [arrowRef.current, asideArrowRef.current].filter(Boolean);
+    if (!arrows.length) return;
+    if (hovered) gsap.to(arrows, { x: 5, duration: 0.3, ease: "power2.out" });
+    else         gsap.to(arrows, { x: 0, duration: 0.5, ease: "elastic.out(1, 0.55)" });
   }, [hovered]);
 
   const stat = study.stats[0];
@@ -564,7 +562,7 @@ function StudyRow({ study, index, isLast }: {
                 @media (min-width: 1024px) { .study-aside { display: flex !important; } }
               `}</style>
 
-              <div style={{ opacity: 0, textAlign: "right" }} ref={statRef}>
+              <div style={{ opacity: 0, textAlign: "right" }} ref={asideStatRef}>
                 <span className="font-heading font-bold block" style={{
                   fontSize: "clamp(2rem,3.2vw,3rem)", color: C.primary,
                   lineHeight: 1, letterSpacing: "-0.03em",
@@ -577,7 +575,7 @@ function StudyRow({ study, index, isLast }: {
                 </span>
               </div>
 
-              <Link to={`/case-studies/${study.id}`}
+              <Link ref={asideCtaRef} to={`/case-studies/${study.id}`}
                 style={{
                   opacity: 0, display: "inline-flex", alignItems: "center",
                   gap: "0.45rem", textDecoration: "none", fontFamily: "inherit",
@@ -591,7 +589,7 @@ function StudyRow({ study, index, isLast }: {
                 onMouseLeave={() => setHovered(false)}
               >
                 <span>View case study</span>
-                <span style={{ display: "inline-block", willChange: "transform" }}>→</span>
+                <span ref={asideArrowRef} style={{ display: "inline-block", willChange: "transform" }}>→</span>
               </Link>
             </div>
 

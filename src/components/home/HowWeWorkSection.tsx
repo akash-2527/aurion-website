@@ -53,7 +53,6 @@ const HowWeWorkSection = () => {
     gsap.set(ruleEls, { scaleX: 0, transformOrigin: "left center", force3D: true });
     if (cta) gsap.set(cta, { opacity: 0, y: 18, force3D: true });
 
-    let refreshTimer: ReturnType<typeof setTimeout>;
 
     const ctx = gsap.context(() => {
 
@@ -129,7 +128,7 @@ const HowWeWorkSection = () => {
     }, section);
 
     // Deferred refresh — lets fonts + above-section layout fully settle
-    refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
+    const refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 200);
 
     return () => {
       ctx.revert();
